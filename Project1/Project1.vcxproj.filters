@@ -54,6 +54,9 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>源文件\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="testBranch.h">
@@ -90,6 +93,9 @@
       <Filter>头文件\imgui</Filter>
     </ClInclude>
     <ClInclude Include="tgaLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

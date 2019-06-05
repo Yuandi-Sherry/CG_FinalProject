@@ -22,7 +22,8 @@ void displayGUI(GLFWwindow* window);
 GLFWwindow* initialize();
 int windowWidth = 1200;
 int windowHeight = 1200;
-
+float lastX = windowWidth / 2.0;
+float lastY = windowHeight / 2.0;
 static void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -33,17 +34,25 @@ const char* fragmentShaderFile = "shader.fs";
 const char* glsl_version = "#version 130";
 // ÇåÆÁÑÕÉ«
 ImVec4 clear_color = ImVec4(0, 0, 0, 1.00f);
+testBranch test;
+
+void processInput(GLFWwindow * window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 
 int main() {
 	GLFWwindow* window = initialize();
-	testBranch test;
+	test.init();
 	// äÖÈ¾Ñ­»·
 	// Ã¿´ÎÑ­»·¿ªÊ¼Ç°¼ì²éGLFWÊÇ·ñ±»ÍË³ö
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 	while (!glfwWindowShouldClose(window)) {
 		// ¼ì²é´¥·¢ÊÂ¼þ¡¢¸üÐÂ´°¿Ú£¬»Øµ÷
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+		processInput(window);
 		//displayGUI(window);
 		glfwMakeContextCurrent(window);
 		test.drawBranch();
@@ -101,6 +110,7 @@ void processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+	test.processInput(window);
 }
 /*
  * ÎÄ¼þ¶ÁÈ¡
@@ -196,4 +206,11 @@ void displayGUI(GLFWwindow* window) {
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	test.mouseCallback(window, xpos, ypos);
+}
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	test.scrollCallback(window, xoffset, yoffset);
 }

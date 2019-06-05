@@ -6,6 +6,8 @@
 #include <string>
 #include <stb_image.h>
 #include <vector>
+#include "Camera.h"
+#include <GLFW/glfw3.h>
 using namespace std;
 class testBranch
 {
@@ -14,11 +16,12 @@ public:
 	~testBranch();
 	void drawBranch();
 	void drawLeaf();
-	
+	// process input
+	void processInput(GLFWwindow * window);
+	void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	void init();
 private:
-	
-	
-
 	void initVars();
 	// leaf
 	GLuint leafVAO = 0;
@@ -38,5 +41,6 @@ private:
 	void initBranch();
 	// cylinder
 	void generateCylinder();
+	Camera camera;
 };
 #endif // !TEST_BRANCH

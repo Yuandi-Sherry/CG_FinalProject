@@ -8,10 +8,10 @@ GLint SLICEX = 20;
 double PI = 3.14159265;
 extern int windowWidth;
 extern int windowHeight;
+extern float lastX;
+extern float lastY;
 testBranch::testBranch() {
-	leafShader.init("textureShader.vs", "textureShader.fs");
-	branchShader.init("textureShader.vs", "textureShader.fs");
-	initVars();
+	
 }
 testBranch::~testBranch() {
 	glDeleteVertexArrays(1, &leafVAO);
@@ -19,7 +19,14 @@ testBranch::~testBranch() {
 	glDeleteBuffers(1, &leafEBO);
 }
 
+void testBranch::init() {
+	leafShader.init("textureShader.vs", "textureShader.fs");
+	branchShader.init("textureShader.vs", "textureShader.fs");
+	initVars();
+	camera.setCamera();
+}
 void testBranch::drawBranch() {
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
 	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
@@ -28,7 +35,7 @@ void testBranch::drawBranch() {
 	glm::mat4 model(1.0f);
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
-	view = glm::translate(view, glm::vec3(0, 0, -1.0f));
+	view = camera.getViewMatrix();
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
 	branchShader.setMat4("projection", projection);
@@ -214,11 +221,31 @@ void testBranch::generateCylinder() {
 	branchIndices.push_back(indexCounter - 1);
 	branchIndices.push_back(indexCounter - outerCounter);
 	branchIndices.push_back(indexCounter);
-	/*for (int i = 0; i < branchVertices.size(); i++) {
-		cout << branchVertices[i] << " ";
+}
 
-		if ((i+1) % 6 == 0) {
-			cout << endl;
-		}
-	}*/
+void testBranch::processInput(GLFWwindow * window) {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cout << "w " << endl;
+		camera.processKeyboard(FORWARD, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		camera.processKeyboard(BACKWARD, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		camera.processKeyboard(LEFT, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		camera.processKeyboard(RIGHT, 0.1);
+	}
+}
+
+void testBranch::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+	camera.processMouseMovement(xoffset, yoffset);
+}
+void testBranch::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+	camera.processMouseScroll(yoffset);
 }
