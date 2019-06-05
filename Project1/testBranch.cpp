@@ -2,9 +2,9 @@
 #include "utils.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "tgaLoader.h"
 
-GLint SLICEY = 60;
-GLint SLICEX = 60;
+GLint SLICEX = 20;
 double PI = 3.14159265;
 extern int windowWidth;
 extern int windowHeight;
@@ -22,12 +22,12 @@ testBranch::~testBranch() {
 void testBranch::drawBranch() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
+	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
 	branchShader.use();
 	// set transformation
 	glm::mat4 model(1.0f);
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
-	model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 	view = glm::translate(view, glm::vec3(0, 0, -1.0f));
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
@@ -97,8 +97,13 @@ void testBranch::initLeaf() {
 	glUniform1i(glGetUniformLocation(leafShader.ID, "leafTexture"), 0);
 }
 
+GLuint createTexture(char const *filePath) {
+	return loadtga(filePath);
+}
+
 void testBranch::initBranch() {
-	branchTexture = utils::loadTexture((GLchar*)"./bark2.bmp");
+	// branchTexture = loadtga("./Sun.tga");
+	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
 	generateCylinder();
 	
 	// init leaf vao, vbo
@@ -116,11 +121,11 @@ void testBranch::initBranch() {
 
 	//glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 2* sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6* sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(2);
 
 	branchShader.use();
@@ -129,8 +134,14 @@ void testBranch::initBranch() {
 }
 
 void testBranch::generateCylinder() {
-	float radius = 0.01;
+	int upperIndex = 0, lowerIndex = 0;
 	float stripe = PI / SLICEX;
+	// for (int theta = 0; theta < 2 * PI; theta += stripe) {
+
+	// }
+	float radius = 0.03;
+	float height = 0.3;
+	
 	double offset = 0;
 	branchVertices.push_back(0.0f);
 	branchVertices.push_back(radius);
@@ -140,20 +151,20 @@ void testBranch::generateCylinder() {
 	branchVertices.push_back(0.0f);
 	int indexCounter = 1;
 	int outerCounter = 0;
-
-	for (float phi = stripe; phi <= PI; phi += stripe) {
+	float phi = stripe;
+	for (float phi = 0; phi <= height; phi += height) {
 		int innerCounter = 0;
-		for (float theta = 0; theta <= 2 * PI; theta += stripe) {
+		for (float theta = 0; theta <= PI*2; theta += stripe) {
 			innerCounter++;
-			float x = radius * cos(theta + offset) * sin(phi);
-			float y = radius * cos(phi);
-			float z = radius * sin(theta + offset) * sin(phi);
+			float x = radius * cos(theta + offset);
+			float y = phi;
+			float z = radius * sin(theta + offset);
 			branchVertices.push_back(x);
 			branchVertices.push_back(y);
 			branchVertices.push_back(z);
 			// ?? 2 
 			float u = theta / 2 / PI;
-			float v = (cos(phi) + 1) / 2;
+			float v = phi/height;
 			branchVertices.push_back(u);
 			branchVertices.push_back(v);
 			branchVertices.push_back(0);
@@ -203,11 +214,11 @@ void testBranch::generateCylinder() {
 	branchIndices.push_back(indexCounter - 1);
 	branchIndices.push_back(indexCounter - outerCounter);
 	branchIndices.push_back(indexCounter);
-	branchVertices.push_back(0);
-	branchVertices.push_back(-radius);
-	branchVertices.push_back(0);
-	branchVertices.push_back(0.5f);
-	branchVertices.push_back(0.0f);
-	branchVertices.push_back(0.0f);
+	/*for (int i = 0; i < branchVertices.size(); i++) {
+		cout << branchVertices[i] << " ";
 
+		if ((i+1) % 6 == 0) {
+			cout << endl;
+		}
+	}*/
 }

@@ -142,6 +142,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="testBranch.h" />
+    <ClInclude Include="tgaLoader.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

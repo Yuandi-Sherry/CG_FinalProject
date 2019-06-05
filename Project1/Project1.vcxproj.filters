@@ -89,6 +89,9 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>头文件\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="tgaLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="textureShader.fs">
