@@ -42,11 +42,11 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		// ¼ì²é´¥·¢ÊÂ¼þ¡¢¸üÐÂ´°¿Ú£¬»Øµ÷
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
 		//displayGUI(window);
 		glfwMakeContextCurrent(window);
-		test.drawLeaf();
+		test.drawBranch();
 		// ½»»»»º³å¡¢»æÖÆ¡¢ÏÔÊ¾
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -83,8 +83,9 @@ GLFWwindow* initialize() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		throw "fail to load glad";
 	}
-	// init GUI
+	// init GUI'
 	initGUI(window);
+	glEnable(GL_DEPTH_TEST);
 	return window;
 }
 /*
