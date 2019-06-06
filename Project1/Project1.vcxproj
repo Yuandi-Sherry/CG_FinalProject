@@ -121,19 +121,23 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Grammar.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
     <ClCompile Include="imgui_impl_glfw.cpp" />
     <ClCompile Include="imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="testBranch.cpp" />
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Grammar.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />
@@ -142,9 +146,11 @@
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="LSystem.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="testBranch.h" />
     <ClInclude Include="tgaLoader.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

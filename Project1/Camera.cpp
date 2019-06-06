@@ -8,7 +8,7 @@ using namespace std;
 void Camera::setCamera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 {
 	// 设置front向量、速度、敏感性、缩放
-	front = glm::vec3(0.0f, 0.0f, -1.0f);
+	front = glm::vec3(0.0f, 0.0f, -10.0f);
 	movementSpeed = SPEED;
 	MouseSensitivity = SENSITIVITY;
 	Zoom = ZOOM;

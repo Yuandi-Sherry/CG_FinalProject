@@ -8,6 +8,8 @@
 #include <vector>
 #include "Camera.h"
 #include <GLFW/glfw3.h>
+#include "LSystem.h"
+#include "tree.h"
 using namespace std;
 class testBranch
 {
@@ -21,6 +23,9 @@ public:
 	void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	void init();
+	void display();
+
+	void drawBranch(glm::vec4 start, glm::vec4 end, double radius);
 private:
 	void initVars();
 	// leaf
@@ -40,7 +45,11 @@ private:
 	Shader branchShader;
 	void initBranch();
 	// cylinder
-	void generateCylinder();
+	void generateCylinder(double radius, double height);
+	void drawCylinder(double radius, double height, glm::mat4 model = glm::mat4(1.0f));
 	Camera camera;
+	LSystem LS;
+	Tree tree;
+	
 };
 #endif // !TEST_BRANCH

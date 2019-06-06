@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "tgaLoader.h"
+#include <cmath>
 
 GLint SLICEX = 20;
 double PI = 3.14159265;
@@ -24,17 +25,29 @@ void testBranch::init() {
 	branchShader.init("textureShader.vs", "textureShader.fs");
 	initVars();
 	camera.setCamera();
+	// dealing with l system
+	LS.init(tree);
+	LS.initGrammar();
+	LS.generateFractal();
 }
-void testBranch::drawBranch() {
 
+void testBranch::drawCylinder(double radius, double height, glm::mat4 model) {
+	
+	// cout << "draw" << endl;
+	generateCylinder(radius, height);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
 	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
 	branchShader.use();
 	// set transformation
-	glm::mat4 model(1.0f);
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			//cout << model[i][j] << " ";
+		}
+		//cout << endl;
+	}
 	view = camera.getViewMatrix();
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
@@ -45,15 +58,53 @@ void testBranch::drawBranch() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
 	//glUniform1i(glGetUniformLocation(shaderProgram, "solarTexture"), 0);
+}
+void testBranch::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
 
+	// calculate branch
+	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
+	GLfloat distance = sqrt(pow(delta.x, 2)+ pow(delta.y, 2) + pow(delta.z, 2));
+	
+	// end point of main trunk
+	glm::vec3 endPoint = glm::vec3(start.x, start.y - distance, start.z);
+
+	// calculate vector of the branch
+	glm::vec3 verticalBranch = glm::vec3(endPoint.x - start.x, endPoint.y - start.y, endPoint.z - start.z);
+
+	// caculate normal of vertical Branch and delta
+	glm::vec3 normal = glm::vec3(verticalBranch.y * delta.z - delta.y * verticalBranch.z, verticalBranch.z * delta.x - verticalBranch.x * delta.z, verticalBranch.x * delta.y - delta.x * verticalBranch.y);
+	// TODO:
+
+	glm::mat4 model(1.0f);
+	if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
+		model = glm::translate(model, glm::vec3(start.x, start.y, start.z));
+		drawCylinder(radius, distance);
+	}
+	else {
+		
+		// calculate length of the triangle formed by end and endPoint
+		GLfloat length = sqrt(pow(fabs(end.x - endPoint.x), 2) + pow(fabs(end.y - endPoint.y), 2) + pow(fabs(end.z - endPoint.z), 2));
+
+		// calculate angle
+		GLfloat angle = acos((distance*distance * 2 - length * length) / (2 * distance*distance))*180.0f / PI;
+
+		// rotate
+		//
+		model = glm::rotate(model, angle, normal);
+		model = glm::translate(model, glm::vec3(start.x, start.y, start.z));
+		// model = glm::translate(model, glm::vec3(0, -distance, 0));
+		drawCylinder(radius, distance, model);
+	}
+	
+	
 }
 
 void testBranch::drawLeaf() {
-	glActiveTexture(GL_TEXTURE0);
+	/*glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, leafTexture);
 	leafShader.use();
 	glBindVertexArray(leafVAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
 }
 
 void testBranch::initVars() {
@@ -111,51 +162,22 @@ GLuint createTexture(char const *filePath) {
 void testBranch::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
-	generateCylinder();
+	// generateCylinder(5, 0.5);
 	
-	// init leaf vao, vbo
-	glGenVertexArrays(1, &branchVAO);
-	glGenBuffers(1, &branchVBO);
-	glGenBuffers(1, &branchEBO);
-
-	glBindVertexArray(branchVAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, branchVBO);
-	glBufferData(GL_ARRAY_BUFFER, branchVertices.size() * sizeof(branchVertices[0]), branchVertices.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, branchIndices.size() * sizeof(branchVertices[0]), branchIndices.data(), GL_STATIC_DRAW);
-
-	//glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6* sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat) * 3));
-	glEnableVertexAttribArray(2);
+	
 
 	branchShader.use();
 	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
 
 }
 
-void testBranch::generateCylinder() {
+void testBranch::generateCylinder(double radius, double height) {
+	branchVertices.clear();
+	branchIndices.clear();
 	int upperIndex = 0, lowerIndex = 0;
-	float stripe = PI / SLICEX;
-	// for (int theta = 0; theta < 2 * PI; theta += stripe) {
-
-	// }
-	float radius = 0.03;
-	float height = 0.3;
+	float stripe = radius / SLICEX;
 	
 	double offset = 0;
-	branchVertices.push_back(0.0f);
-	branchVertices.push_back(radius);
-	branchVertices.push_back(0.0f);
-	branchVertices.push_back(0.5f);
-	branchVertices.push_back(1.0f);
-	branchVertices.push_back(0.0f);
 	int indexCounter = 1;
 	int outerCounter = 0;
 	float phi = stripe;
@@ -221,11 +243,32 @@ void testBranch::generateCylinder() {
 	branchIndices.push_back(indexCounter - 1);
 	branchIndices.push_back(indexCounter - outerCounter);
 	branchIndices.push_back(indexCounter);
+
+	// init leaf vao, vbo
+	glGenVertexArrays(1, &branchVAO);
+	glGenBuffers(1, &branchVBO);
+	glGenBuffers(1, &branchEBO);
+
+	glBindVertexArray(branchVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, branchVBO);
+	glBufferData(GL_ARRAY_BUFFER, branchVertices.size() * sizeof(branchVertices[0]), branchVertices.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, branchIndices.size() * sizeof(branchVertices[0]), branchIndices.data(), GL_STATIC_DRAW);
+
+	//glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat) * 3));
+	glEnableVertexAttribArray(2);
 }
 
 void testBranch::processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		cout << "w " << endl;
 		camera.processKeyboard(FORWARD, 0.1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -248,4 +291,16 @@ void testBranch::mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 }
 void testBranch::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.processMouseScroll(yoffset);
+}
+
+void testBranch::display() {
+	
+	// draw trunks
+	for (int i = 0; i < 2; i++) {
+		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
+	}
+	// draw leaves
+	/*for (int i = 0; i < LS.leaves.size(); i++) {
+		drawBranch(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
+	}*/
 }

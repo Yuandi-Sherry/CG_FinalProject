@@ -55,7 +55,7 @@ int main() {
 		processInput(window);
 		//displayGUI(window);
 		glfwMakeContextCurrent(window);
-		test.drawBranch();
+		test.display();
 		// ½»»»»º³å¡¢»æÖÆ¡¢ÏÔÊ¾
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -209,7 +209,7 @@ void displayGUI(GLFWwindow* window) {
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	test.mouseCallback(window, xpos, ypos);
+	//test.mouseCallback(window, xpos, ypos);
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	test.scrollCallback(window, xoffset, yoffset);
