@@ -29,13 +29,10 @@ void testBranch::init() {
 	LS.init(tree);
 	LS.initGrammar();
 	LS.generateFractal();
-	generateCylinder(1, 1);
+	generateCylinder();
 }
 
-void testBranch::drawCylinder(double radius, double height, glm::mat4 model) {
-	
-	// cout << "draw" << endl;
-	
+void testBranch::drawCylinder(glm::mat4 model) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
 	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
@@ -43,12 +40,6 @@ void testBranch::drawCylinder(double radius, double height, glm::mat4 model) {
 	// set transformation
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			//cout << model[i][j] << " ";
-		}
-		//cout << endl;
-	}
 	view = camera.getViewMatrix();
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
@@ -69,7 +60,7 @@ void testBranch::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
 	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, start.y, start.z));
 	// cout << "translation " << translation.x << ' ' << translation.y << " " << translation.z << endl;
 	if (delta.x == 0 && delta.z == 0) {
-		drawCylinder(radius, distance, translation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius)));
+		drawCylinder(translation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius)));
 	}
 	else {
 		glm::vec3 assVec = glm::vec3(0, distance, 0);
@@ -88,7 +79,7 @@ void testBranch::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
 		//
 		//testModel = glm::translate(testModel, glm::vec3(2, 2, 2));
 		// testModel = glm::rotate(testModel, 0.0f, glm::vec3(0, 1, 0));
-		drawCylinder(radius, distance, translation* model);
+		drawCylinder(translation* model);
 	}
 
 
@@ -157,7 +148,7 @@ GLuint createTexture(char const *filePath) {
 void testBranch::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
-	generateCylinder(5, 0.5);
+	generateCylinder();
 	
 	
 
@@ -166,14 +157,10 @@ void testBranch::initBranch() {
 
 }
 
-void testBranch::generateCylinder(double radiu, double height) {
-	cout << "generate cylinder" << endl;
-	//branchVertices.clear();
-	// branchIndices.clear();
+void testBranch::generateCylinder() {
 	int upperIndex = 0, lowerIndex = 0;
 	float stripe = 1.0f / SLICEX;
 	double radius = 1;
-
 	double offset = 0;
 	int indexCounter = 1;
 	int outerCounter = 0;
@@ -242,7 +229,7 @@ void testBranch::generateCylinder(double radiu, double height) {
 	branchIndices.push_back(indexCounter - outerCounter);
 	branchIndices.push_back(indexCounter);
 
-	// init leaf vao, vbo
+	// init leaf vao, vbo, ebo
 	glGenVertexArrays(1, &branchVAO);
 	glGenBuffers(1, &branchVBO);
 	glGenBuffers(1, &branchEBO);
@@ -255,15 +242,12 @@ void testBranch::generateCylinder(double radiu, double height) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, branchIndices.size() * sizeof(branchVertices[0]), branchIndices.data(), GL_STATIC_DRAW);
 
-	//glEnableVertexAttribArray(0);
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(2);
-	cout << "finish generate cylinder" << endl;
 }
 
 void testBranch::processInput(GLFWwindow * window) {
@@ -293,14 +277,8 @@ void testBranch::scrollCallback(GLFWwindow* window, double xoffset, double yoffs
 }
 
 void testBranch::display() {
-	//cout << " ------------------------" << endl;
-	/*for (int i = 0; i < 5; i++) {
-		cout << LS.trunks[i].pos1.x << " " << LS.trunks[i].pos1.y << " " << LS.trunks[i].pos1.z << endl;
-		cout << LS.trunks[i].pos2.x << " " << LS.trunks[i].pos2.y << " " << LS.trunks[i].pos2.z << endl;
-	}*/
 	// draw trunks
 	for (int i = 0; i < LS.trunks.size(); i++) {
-		//cout << "i = " << i << endl;
 		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
 	}
 	// draw leaves

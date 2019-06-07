@@ -45,8 +45,8 @@ private:
 	Shader branchShader;
 	void initBranch();
 	// cylinder
-	void generateCylinder(double radius, double height);
-	void drawCylinder(double radius, double height, glm::mat4 model = glm::mat4(1.0f));
+	void generateCylinder();
+	void drawCylinder(glm::mat4 model = glm::mat4(1.0f));
 	Camera camera;
 	LSystem LS;
 	Tree tree;
