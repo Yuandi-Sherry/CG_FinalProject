@@ -8,7 +8,7 @@ class Grammar
 {
 private:
 	string Gname; 
-	int level = 2; 
+	int level = 5; 
 	string grammar = "FA[*+X][-/&X][/%X]B";
 	string rule;
 public:

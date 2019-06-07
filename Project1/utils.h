@@ -29,6 +29,35 @@ public:
 		stbi_image_free(image);
 		return textureID;
 	}
+	/*
+	 * the white part of the texture will be transparent
+	 */
+	static GLuint loadTextureCutout(GLchar* path) {
+		// Generate texture ID and load texture data 
+		GLuint textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		// Parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		int width, height, n;
+		stbi_set_flip_vertically_on_load(true);
+		unsigned char *image = stbi_load(path, &width, &height, &n, STBI_rgb_alpha);// Assign texture to ID
+		if (image) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+			printf("%d, %d, %d\n", width, height, n);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else {
+			cout << "fail to load texture" << endl;
+		}
+
+		stbi_image_free(image);
+		return textureID;
+	}
 
 private:
 

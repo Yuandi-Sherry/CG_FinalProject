@@ -16,8 +16,7 @@ class testBranch
 public:
 	testBranch();
 	~testBranch();
-	void drawBranch();
-	void drawLeaf();
+	void drawLeaf(glm::vec4 start, glm::vec4 end, double radius);
 	// process input
 	void processInput(GLFWwindow * window);
 	void mouseCallback(GLFWwindow* window, double xpos, double ypos);

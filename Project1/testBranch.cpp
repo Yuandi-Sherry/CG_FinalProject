@@ -35,13 +35,13 @@ void testBranch::init() {
 void testBranch::drawCylinder(glm::mat4 model) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
-	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
+	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
 	branchShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
 	view = camera.getViewMatrix();
-	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
 	branchShader.setMat4("projection", projection);
 	branchShader.setMat4("view", view);
@@ -52,45 +52,60 @@ void testBranch::drawCylinder(glm::mat4 model) {
 	//glUniform1i(glGetUniformLocation(shaderProgram, "solarTexture"), 0);
 }
 void testBranch::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
-	//cout << "start " << start.x << ' ' << start.y << " " << start.z << endl;
-	//cout << "end " << end.x << ' ' << end.y << " " << end.z << endl;
 	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
-	//cout << "delta " << delta.x << ' ' << delta.y << " " << delta.z << endl;
 	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
 	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, start.y, start.z));
-	// cout << "translation " << translation.x << ' ' << translation.y << " " << translation.z << endl;
 	if (delta.x == 0 && delta.z == 0) {
 		drawCylinder(translation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius)));
 	}
 	else {
 		glm::vec3 assVec = glm::vec3(0, distance, 0);
-		//cout << "assVec " << assVec.x << ' ' << assVec.y << " " << assVec.z << endl;
-
 		glm::vec3 normal = glm::cross(assVec, delta);
-		//cout << "normal " << normal.x << ' ' << normal.y << " " << normal.z << endl;
-		//cout << "dot " << glm::dot(assVec, delta) << endl;
-		//cout << "cos " << glm::dot(assVec, delta) / distance / distance << endl;
 		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
-		//cout << "angle " << angle << endl;
 		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
 		glm::mat4 model = rotation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius));
-
-		//glm::mat4 testModel = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0,0,1));
-		//
-		//testModel = glm::translate(testModel, glm::vec3(2, 2, 2));
-		// testModel = glm::rotate(testModel, 0.0f, glm::vec3(0, 1, 0));
 		drawCylinder(translation* model);
 	}
-
-
 }
 
-void testBranch::drawLeaf() {
-	/*glActiveTexture(GL_TEXTURE0);
+void testBranch::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
+	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
+	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x + radius/3, start.y+radius/3, start.z));
+	glm::mat4 model(1.0f);
+	if (delta.x == 0 && delta.z == 0) {
+		model = translation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)radius,1));
+	}
+	else {
+		glm::vec3 assVec = glm::vec3(0, distance, 0);
+		glm::vec3 normal = glm::cross(assVec, delta);
+		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
+		model = translation *  rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, 1));
+	}
+	
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, leafTexture);
+	glUniform1i(glGetUniformLocation(leafShader.ID, "myTexture"), 0);
 	leafShader.use();
+	// set transformation
+	glm::mat4 view(1.0f);
+	glm::mat4 projection(1.0f);
+	view = camera.getViewMatrix();
+	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+
+	leafShader.setMat4("projection", projection);
+	leafShader.setMat4("view", view);
+	leafShader.setMat4("model", model);
+	//glBindVertexArray(branchVAO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
+	//glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
+
+
+
+	//leafShader.use();
 	glBindVertexArray(leafVAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void testBranch::initVars() {
@@ -101,7 +116,7 @@ void testBranch::initVars() {
 }
 
 void testBranch::initLeaf() {
-	leafTexture = utils::loadTexture((GLchar*)"./Maple1.bmp");
+	leafTexture = utils::loadTextureCutout((GLchar*)"./Maple1.png");
 
 	float temp[] = {
 		// positions          // colors           // texture coords
@@ -149,11 +164,8 @@ void testBranch::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
 	generateCylinder();
-	
-	
-
 	branchShader.use();
-	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
+	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
 
 }
 
@@ -281,8 +293,13 @@ void testBranch::display() {
 	for (int i = 0; i < LS.trunks.size(); i++) {
 		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
 	}
-	// draw leaves
-	/*for (int i = 0; i < LS.leaves.size(); i++) {
-		drawBranch(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
+	/*for (int i = 0; i < 1; i++) {
+		cout << LS.leaves[i].pos1.x << " " << LS.leaves[i].pos1.y << " " << LS.leaves[i].pos1.z << endl;
+		cout << LS.leaves[i].pos2.x << " " << LS.leaves[i].pos2.y << " " << LS.leaves[i].pos2.z << endl;
+		cout << LS.leaves[i].radius << endl;
 	}*/
+	// draw leaves
+	for (int i = 0; i < LS.leaves.size(); i++) {
+		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
+	}
 }

@@ -63,12 +63,16 @@ void LSystem::generateFractal() { // use the grammar to generate the tree
 				curState.pos = curState.pos + (GLfloat)length * curState.dir; 
 				// end points
 				tmp_trunk.pos2 = curState.pos;
+				tmp_leaf.pos1 += (tmp_trunk.pos2 - tmp_trunk.pos1) * (GLfloat)((double)(rand() % 9) / 10);
 				tmp_leaf.pos2 = curState.pos;
 				// radius
 				tmp_trunk.radius = radius;
 				tmp_leaf.radius = leafRadius;
 				// add to vector
 				trunks.push_back(tmp_trunk);
+				leaves.push_back(tmp_leaf);
+				tmp_leaf.pos2 = curState.pos + (tmp_trunk.pos2 - tmp_trunk.pos1);
+				tmp_leaf.pos1 = curState.pos;
 				leaves.push_back(tmp_leaf);
 				break;
 			case 'A':
