@@ -8,25 +8,23 @@
 #include <vector>
 #include "Camera.h"
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "LSystem.h"
 #include "tree.h"
 using namespace std;
-class testBranch
+class TreeGeneration
 {
 public:
-	testBranch();
-	~testBranch();
-	void drawLeaf(glm::vec4 start, glm::vec4 end, double radius);
-	// process input
-	void processInput(GLFWwindow * window);
-	void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-	void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-	void init();
+	TreeGeneration();
+	~TreeGeneration();
+	void init(glm::mat4 position = glm::mat4(1.0f));
 	void display();
-
-	void drawBranch(glm::vec4 start, glm::vec4 end, double radius);
+	
 private:
 	void initVars();
+	// position in global world
+	glm::mat4 position = glm::mat4(1.0f);
 	// leaf
 	GLuint leafVAO = 0;
 	GLuint leafVBO = 0;
@@ -34,20 +32,23 @@ private:
 	GLuint leafTexture;
 	Shader leafShader;
 	void initLeaf();
+	void drawLeaf(glm::vec4 start, glm::vec4 end, double radius);
 	// branch
 	GLuint branchVAO = 0;
 	GLuint branchVBO = 0;
 	GLuint branchEBO = 0;
+	GLuint branchTexture;
+	void initBranch();
+	Shader branchShader;
+	void drawBranch(glm::vec4 start, glm::vec4 end, double radius);
+	// cylinder for branch
 	vector<float> branchVertices;
 	vector<int> branchIndices;
-	GLuint branchTexture;
-	Shader branchShader;
-	void initBranch();
-	// cylinder
 	void generateCylinder();
 	void drawCylinder(glm::mat4 model = glm::mat4(1.0f));
-	Camera camera;
+	// Lsystem
 	LSystem LS;
+	// tree definiation
 	Tree tree;
 	
 };

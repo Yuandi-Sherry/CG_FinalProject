@@ -131,7 +131,7 @@
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="testBranch.cpp" />
+    <ClCompile Include="TreeGeneration.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -148,8 +148,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="testBranch.h" />
-    <ClInclude Include="tgaLoader.h" />
+    <ClInclude Include="TreeGeneration.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

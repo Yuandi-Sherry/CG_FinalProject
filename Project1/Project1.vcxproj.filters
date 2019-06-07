@@ -27,9 +27,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="testBranch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -66,11 +63,11 @@
     <ClCompile Include="Tree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TreeGeneration.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="testBranch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -101,9 +98,6 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>头文件\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="tgaLoader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -114,6 +108,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeGeneration.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

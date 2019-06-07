@@ -7,7 +7,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
-#include "testBranch.h"
+#include "TreeGeneration.h"
 #define N 888
 
 using namespace std;
@@ -35,7 +35,8 @@ const char* fragmentShaderFile = "shader.fs";
 const char* glsl_version = "#version 130";
 // ÇåÆÁÑÕÉ«
 ImVec4 clear_color = ImVec4(0, 0, 0, 1.00f);
-testBranch test;
+TreeGeneration test;
+Camera camera;
 
 void processInput(GLFWwindow * window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -44,9 +45,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 int main() {
 	GLFWwindow* window = initialize();
+	// init camera
+	camera.setCamera();
+	// init tree
 	test.init();
-	// äÖÈ¾Ñ­»·
-	// Ã¿´ÎÑ­»·¿ªÊ¼Ç°¼ì²éGLFWÊÇ·ñ±»ÍË³ö
+
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	while (!glfwWindowShouldClose(window)) {
@@ -111,7 +114,18 @@ void processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
-	test.processInput(window);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		camera.processKeyboard(FORWARD, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		camera.processKeyboard(BACKWARD, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		camera.processKeyboard(LEFT, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		camera.processKeyboard(RIGHT, 0.1);
+	}
 }
 /*
  * ÎÄ¼þ¶ÁÈ¡
@@ -210,8 +224,12 @@ void displayGUI(GLFWwindow* window) {
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	//test.mouseCallback(window, xpos, ypos);
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+	camera.processMouseMovement(xoffset, yoffset);
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	test.scrollCallback(window, xoffset, yoffset);
+	camera.processMouseScroll(yoffset);
 }
