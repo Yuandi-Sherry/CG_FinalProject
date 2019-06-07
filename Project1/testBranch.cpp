@@ -166,13 +166,14 @@ void testBranch::initBranch() {
 
 }
 
-void testBranch::generateCylinder(double radius, double height) {
+void testBranch::generateCylinder(double radiu, double height) {
 	cout << "generate cylinder" << endl;
 	//branchVertices.clear();
 	// branchIndices.clear();
 	int upperIndex = 0, lowerIndex = 0;
 	float stripe = 1.0f / SLICEX;
-	
+	double radius = 1;
+
 	double offset = 0;
 	int indexCounter = 1;
 	int outerCounter = 0;
@@ -181,9 +182,9 @@ void testBranch::generateCylinder(double radius, double height) {
 		int innerCounter = 0;
 		for (float theta = 0; theta <= PI*2; theta += stripe) {
 			innerCounter++;
-			float x = 1 * cos(theta + offset);
+			float x = radius * cos(theta + offset);
 			float y = phi;
-			float z = 1 * sin(theta + offset);
+			float z = radius * sin(theta + offset);
 			branchVertices.push_back(x);
 			branchVertices.push_back(y);
 			branchVertices.push_back(z);
@@ -229,6 +230,7 @@ void testBranch::generateCylinder(double radius, double height) {
 		}
 		outerCounter = innerCounter;
 		offset += stripe / 2;
+		radius *= 0.9;
 	}
 	for (int i = indexCounter - 1; i > indexCounter - outerCounter; --i) {
 		branchIndices.push_back(i);
