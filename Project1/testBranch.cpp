@@ -6,7 +6,7 @@
 #include <cmath>
 
 GLint SLICEX = 20;
-double PI = 3.14159265;
+extern double PI;
 extern int windowWidth;
 extern int windowHeight;
 extern float lastX;
@@ -29,12 +29,13 @@ void testBranch::init() {
 	LS.init(tree);
 	LS.initGrammar();
 	LS.generateFractal();
+	generateCylinder(1, 1);
 }
 
 void testBranch::drawCylinder(double radius, double height, glm::mat4 model) {
 	
 	// cout << "draw" << endl;
-	generateCylinder(radius, height);
+	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
 	glUniform1i(glGetUniformLocation(branchShader.ID, "branchTexture"), 0);
@@ -60,43 +61,37 @@ void testBranch::drawCylinder(double radius, double height, glm::mat4 model) {
 	//glUniform1i(glGetUniformLocation(shaderProgram, "solarTexture"), 0);
 }
 void testBranch::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
-
-	// calculate branch
+	//cout << "start " << start.x << ' ' << start.y << " " << start.z << endl;
+	//cout << "end " << end.x << ' ' << end.y << " " << end.z << endl;
 	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
-	GLfloat distance = sqrt(pow(delta.x, 2)+ pow(delta.y, 2) + pow(delta.z, 2));
-	
-	// end point of main trunk
-	glm::vec3 endPoint = glm::vec3(start.x, start.y - distance, start.z);
-
-	// calculate vector of the branch
-	glm::vec3 verticalBranch = glm::vec3(endPoint.x - start.x, endPoint.y - start.y, endPoint.z - start.z);
-
-	// caculate normal of vertical Branch and delta
-	glm::vec3 normal = glm::vec3(verticalBranch.y * delta.z - delta.y * verticalBranch.z, verticalBranch.z * delta.x - verticalBranch.x * delta.z, verticalBranch.x * delta.y - delta.x * verticalBranch.y);
-	// TODO:
-
-	glm::mat4 model(1.0f);
-	if (normal.x == 0 && normal.y == 0 && normal.z == 0) {
-		model = glm::translate(model, glm::vec3(start.x, start.y, start.z));
-		drawCylinder(radius, distance);
+	//cout << "delta " << delta.x << ' ' << delta.y << " " << delta.z << endl;
+	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, start.y, start.z));
+	// cout << "translation " << translation.x << ' ' << translation.y << " " << translation.z << endl;
+	if (delta.x == 0 && delta.z == 0) {
+		drawCylinder(radius, distance, translation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius)));
 	}
 	else {
-		
-		// calculate length of the triangle formed by end and endPoint
-		GLfloat length = sqrt(pow(fabs(end.x - endPoint.x), 2) + pow(fabs(end.y - endPoint.y), 2) + pow(fabs(end.z - endPoint.z), 2));
+		glm::vec3 assVec = glm::vec3(0, distance, 0);
+		//cout << "assVec " << assVec.x << ' ' << assVec.y << " " << assVec.z << endl;
 
-		// calculate angle
-		GLfloat angle = acos((distance*distance * 2 - length * length) / (2 * distance*distance))*180.0f / PI;
+		glm::vec3 normal = glm::cross(assVec, delta);
+		//cout << "normal " << normal.x << ' ' << normal.y << " " << normal.z << endl;
+		//cout << "dot " << glm::dot(assVec, delta) << endl;
+		//cout << "cos " << glm::dot(assVec, delta) / distance / distance << endl;
+		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
+		//cout << "angle " << angle << endl;
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
+		glm::mat4 model = rotation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius));
 
-		// rotate
+		//glm::mat4 testModel = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0,0,1));
 		//
-		model = glm::rotate(model, angle, normal);
-		model = glm::translate(model, glm::vec3(start.x, start.y, start.z));
-		// model = glm::translate(model, glm::vec3(0, -distance, 0));
-		drawCylinder(radius, distance, model);
+		//testModel = glm::translate(testModel, glm::vec3(2, 2, 2));
+		// testModel = glm::rotate(testModel, 0.0f, glm::vec3(0, 1, 0));
+		drawCylinder(radius, distance, translation* model);
 	}
-	
-	
+
+
 }
 
 void testBranch::drawLeaf() {
@@ -162,7 +157,7 @@ GLuint createTexture(char const *filePath) {
 void testBranch::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
-	// generateCylinder(5, 0.5);
+	generateCylinder(5, 0.5);
 	
 	
 
@@ -172,28 +167,29 @@ void testBranch::initBranch() {
 }
 
 void testBranch::generateCylinder(double radius, double height) {
-	branchVertices.clear();
-	branchIndices.clear();
+	cout << "generate cylinder" << endl;
+	//branchVertices.clear();
+	// branchIndices.clear();
 	int upperIndex = 0, lowerIndex = 0;
-	float stripe = radius / SLICEX;
+	float stripe = 1.0f / SLICEX;
 	
 	double offset = 0;
 	int indexCounter = 1;
 	int outerCounter = 0;
 	float phi = stripe;
-	for (float phi = 0; phi <= height; phi += height) {
+	for (float phi = 0; phi <= 1; phi += 1) {
 		int innerCounter = 0;
 		for (float theta = 0; theta <= PI*2; theta += stripe) {
 			innerCounter++;
-			float x = radius * cos(theta + offset);
+			float x = 1 * cos(theta + offset);
 			float y = phi;
-			float z = radius * sin(theta + offset);
+			float z = 1 * sin(theta + offset);
 			branchVertices.push_back(x);
 			branchVertices.push_back(y);
 			branchVertices.push_back(z);
 			// ?? 2 
 			float u = theta / 2 / PI;
-			float v = phi/height;
+			float v = phi/1;
 			branchVertices.push_back(u);
 			branchVertices.push_back(v);
 			branchVertices.push_back(0);
@@ -265,6 +261,7 @@ void testBranch::generateCylinder(double radius, double height) {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(2);
+	cout << "finish generate cylinder" << endl;
 }
 
 void testBranch::processInput(GLFWwindow * window) {
@@ -294,9 +291,14 @@ void testBranch::scrollCallback(GLFWwindow* window, double xoffset, double yoffs
 }
 
 void testBranch::display() {
-	
+	//cout << " ------------------------" << endl;
+	/*for (int i = 0; i < 5; i++) {
+		cout << LS.trunks[i].pos1.x << " " << LS.trunks[i].pos1.y << " " << LS.trunks[i].pos1.z << endl;
+		cout << LS.trunks[i].pos2.x << " " << LS.trunks[i].pos2.y << " " << LS.trunks[i].pos2.z << endl;
+	}*/
 	// draw trunks
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < LS.trunks.size(); i++) {
+		//cout << "i = " << i << endl;
 		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
 	}
 	// draw leaves

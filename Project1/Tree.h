@@ -1,5 +1,6 @@
 #ifndef  _TREE_H_
 #define  _TREE_H_
+extern double PI;
 typedef enum _TreeType //树的类型
 {
 	Tree_0 = 0,
@@ -35,12 +36,12 @@ class Trunk //树干
 public:
 	TreeType T_type;//树干类型
 	double length = 10.0;//树枝长度
-	double length_shrink = 0.75;//树枝长度收缩率
-	double radius = 1.0;//树枝半径
+	double length_shrink = 0.9;//树枝长度收缩率
+	double radius = 0.6;//树枝半径
 	double radius_shrink = 0.75;//树枝半径收缩率
-	double leap_x = 35.00;//树枝_x倾斜角
-	double leap_y = 30.00;//树枝_y倾斜角
-	double leap_z = 30.00;//树枝_z倾斜角
+	double leap_x = 30.00 / 180.0f * PI;//树枝_x倾斜角
+	double leap_y = 35.00 / 180.0f * PI;//树枝_y倾斜角
+	double leap_z = 30.00 / 180.0f * PI;//树枝_z倾斜角
 	Trunk() {}
 	Trunk(TreeType type) :T_type(type) {}
 	//更新树枝类型（类型）

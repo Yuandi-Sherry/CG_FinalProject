@@ -9,8 +9,9 @@
 #include <stdio.h>
 #include "testBranch.h"
 #define N 888
-using namespace std;
 
+using namespace std;
+double PI = 3.14159265;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
 bool readFile(const string & fileName, string & content);

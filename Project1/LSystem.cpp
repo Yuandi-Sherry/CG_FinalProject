@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-GLfloat PI = 3.14;
+extern double PI;
 glm::vec3 xAxis = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 yAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 zAxis = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -118,16 +118,7 @@ void LSystem::generateFractal() { // use the grammar to generate the tree
 		}
 		i++;
 	}
-
-	// debugging
-	for (int i = 0; i < trunks.size(); i++) {
-		cout << "-----------------------------" << endl;
-		cout << trunks[i].pos1.x << " " << trunks[i].pos1.y << " " << trunks[i].pos1.z << endl;
-		cout << trunks[i].pos2.x << " " << trunks[i].pos2.y << " " << trunks[i].pos2.z << endl;
-		cout << trunks[i].radius << endl;
-		cout << "-----------------------------" << endl;
-	}
-
+	
 }
 
 void LSystem::init(Tree tree) {

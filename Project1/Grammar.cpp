@@ -21,9 +21,9 @@ void Grammar::Iteration() {
 			if (temprule[j] == 'X')// root
 			{
 				double x = rand() % 100; ;
-				if (x > 50) {
+				//if (x > 20) {
 					rule += grammar; // add a new branch 
-				}
+				//}
 				j++;
 			}
 			else // rotate
