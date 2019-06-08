@@ -19,18 +19,21 @@
     <Filter Include="源文件\imgui">
       <UniqueIdentifier>{30a053bd-054e-451e-8c54-eb8749f792f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\Tree">
+      <UniqueIdentifier>{2fcf312c-f13a-43dd-9853-c04b659f802c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Assistance">
+      <UniqueIdentifier>{3903a354-a23e-4ba6-8f66-e2766facb8db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Tree">
+      <UniqueIdentifier>{154c606b-9c83-474a-bb2f-75cf6ce0d985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Assistance">
+      <UniqueIdentifier>{0f8a7dbd-521f-4d12-bd0f-b896c1a262e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
@@ -51,29 +54,32 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>源文件\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Grammar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LSystem.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="TreeGeneration.cpp">
+      <Filter>源文件\Tree</Filter>
     </ClCompile>
     <ClCompile Include="Tree.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Tree</Filter>
     </ClCompile>
-    <ClCompile Include="TreeGeneration.cpp">
+    <ClCompile Include="LSystem.cpp">
+      <Filter>源文件\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Grammar.cpp">
+      <Filter>源文件\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>源文件\Assistance</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>源文件\Assistance</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>源文件\Assistance</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="imconfig.h">
       <Filter>头文件\imgui</Filter>
     </ClInclude>
@@ -98,19 +104,28 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>头文件\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Grammar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="LSystem.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="TreeGeneration.h">
+      <Filter>头文件\Tree</Filter>
     </ClInclude>
     <ClInclude Include="Tree.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Tree</Filter>
     </ClInclude>
-    <ClInclude Include="TreeGeneration.h">
+    <ClInclude Include="LSystem.h">
+      <Filter>头文件\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Grammar.h">
+      <Filter>头文件\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,6 +143,12 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="colorShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="skybox.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="skybox.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

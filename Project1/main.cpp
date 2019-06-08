@@ -1,5 +1,6 @@
 ﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -8,10 +9,13 @@
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #include "TreeGeneration.h"
+#include "Skybox.h"
 #define N 888
 
 using namespace std;
 double PI = 3.14159265;
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
 bool readFile(const string & fileName, string & content);
@@ -34,33 +38,33 @@ const char* vertexShaderFile = "shader.vs";
 const char* fragmentShaderFile = "shader.fs";
 const char* glsl_version = "#version 130";
 // ÇåÆÁÑÕÉ«
-ImVec4 clear_color = ImVec4(0, 0, 0, 1.00f);
-TreeGeneration test;
-Camera camera;
+
 
 void processInput(GLFWwindow * window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
+//---------------------debug--------------------------
+unsigned int loadCubemap(vector<std::string> faces);
+//---------------------debug--------------------------
 
+ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+TreeGeneration treeGeneration;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Skybox skybox;
 int main() {
 	GLFWwindow* window = initialize();
-	// init camera
-	camera.setCamera();
 	// init tree
-	test.init();
-
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, -20.0f, -50.0f)));
+	skybox.init();
 	while (!glfwWindowShouldClose(window)) {
-		// ¼ì²é´¥·¢ÊÂ¼þ¡¢¸üÐÂ´°¿Ú£¬»Øµ÷
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		processInput(window);
 		//displayGUI(window);
-		glfwMakeContextCurrent(window);
-		test.display();
-		// ½»»»»º³å¡¢»æÖÆ¡¢ÏÔÊ¾
+		//glfwMakeContextCurrent(window);
+		treeGeneration.display();
+		skybox.display();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -91,8 +95,13 @@ GLFWwindow* initialize() {
 	// ½«´´½¨µÄ´°¿ÚµÄÉÏÏÂÎÄÉèÎªµ±Ç°Ïß³ÌµÄÖ÷ÉÏÏÂÎÄ
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(1); // Enable vsync
-	// ³õÊ¼»¯GLAD£¬¼ÓÔØÏµÍ³Ïà¹ØOpenGLº¯ÊýÖ¸Õë
+
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		throw "fail to load glad";
 	}
@@ -115,16 +124,16 @@ void processInput(GLFWwindow * window) {
 		glfwSetWindowShouldClose(window, true);
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera.processKeyboard(FORWARD, 0.1);
+		camera.ProcessKeyboard(FORWARD, 0.1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera.processKeyboard(BACKWARD, 0.1);
+		camera.ProcessKeyboard(BACKWARD, 0.1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera.processKeyboard(LEFT, 0.1);
+		camera.ProcessKeyboard(LEFT, 0.1);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera.processKeyboard(RIGHT, 0.1);
+		camera.ProcessKeyboard(RIGHT, 0.1);
 	}
 }
 /*
@@ -218,8 +227,8 @@ void displayGUI(GLFWwindow* window) {
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &display_w, &display_h);
 	glViewport(-1, 1, display_w, display_h);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -228,8 +237,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
-	camera.processMouseMovement(xoffset, yoffset);
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	camera.processMouseScroll(yoffset);
+	camera.ProcessMouseScroll(yoffset);
 }
+

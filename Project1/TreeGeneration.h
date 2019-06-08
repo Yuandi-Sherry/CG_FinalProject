@@ -4,7 +4,7 @@
 #include "Shader.h"
 #include <iostream>
 #include <string>
-#include <stb_image.h>
+//#include <stb_image.h>
 #include <vector>
 #include "Camera.h"
 #include <GLFW/glfw3.h>

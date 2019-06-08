@@ -2,7 +2,6 @@
 #include "utils.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "tgaLoader.h"
 #include <cmath>
 #include <GLFW/glfw3.h>
 #include "Camera.h"
@@ -44,7 +43,7 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 	// set transformation
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
-	view = camera.getViewMatrix();
+	view = camera.GetViewMatrix();
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
 	branchShader.setMat4("projection", projection);
@@ -90,12 +89,11 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, leafTexture);
-	glUniform1i(glGetUniformLocation(leafShader.ID, "myTexture"), 0);
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
-	view = camera.getViewMatrix();
+	view = camera.GetViewMatrix();
 	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
 	leafShader.setMat4("projection", projection);
@@ -153,9 +151,6 @@ void TreeGeneration::initLeaf() {
 	glUniform1i(glGetUniformLocation(leafShader.ID, "leafTexture"), 0);
 }
 
-GLuint createTexture(char const *filePath) {
-	return loadtga(filePath);
-}
 
 void TreeGeneration::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");

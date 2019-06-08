@@ -28,7 +28,7 @@ void LSystem::initGrammar() { // load the grammar
  */
 
 void LSystem::generateFractal() { // use the grammar to generate the tree
-	cout << "generate Fractal " << grammar.getRule() << endl;
+	//cout << "generate Fractal " << grammar.getRule() << endl;
 	// FA[*+FA[*+FA[*+X][-/&X][/%X]B][-/&FA[*+X][-/&X][/%X]B][/%FA[*+X][-/&X][/%X]B]B][-/&FA[*+FA[*+X][-/&X][/%X]B][-/&FA[*+X][-/&X][/%X]B][/%FA[*+X][-/&X][/%X]B]B][/%FA[*+FA[*+X][-/&X][/%X]B][-/&FA[*+X][-/&X][/%X]B][/%FA[*+X][-/&X][/%X]B]B]B
 	// init
 	trunks.clear();

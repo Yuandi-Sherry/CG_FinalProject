@@ -130,10 +130,10 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="TreeGeneration.cpp" />
     <ClCompile Include="Tree.cpp" />
-    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -148,6 +148,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="TreeGeneration.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="utils.h" />
@@ -156,6 +157,8 @@
     <None Include="colorShader.fs" />
     <None Include="colorShader.vs" />
     <None Include="imgui.ini" />
+    <None Include="skybox.fs" />
+    <None Include="skybox.vs" />
     <None Include="textureShader.fs" />
     <None Include="textureShader.vs" />
   </ItemGroup>
