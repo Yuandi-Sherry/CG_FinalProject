@@ -26,12 +26,12 @@ void Skybox::init() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
 
-	faces.push_back("./skybox/right.jpg");
-	faces.push_back("./skybox/left.jpg");
-	faces.push_back("./skybox/top.jpg");
-	faces.push_back("./skybox/bottom.jpg");
-	faces.push_back("./skybox/front.jpg");
-	faces.push_back("./skybox/back.jpg");
+	faces.push_back("./skybox/bloody-heresy_ft.tga");
+	faces.push_back("./skybox/bloody-heresy_bk.tga");
+	faces.push_back("./skybox/bloody-heresy_up.tga");
+	faces.push_back("./skybox/bloody-heresy_dn.tga");
+	faces.push_back("./skybox/bloody-heresy_rt.tga");
+	faces.push_back("./skybox/bloody-heresy_lf.tga");
 	skyboxTexture = utils::loadCubemap(faces);
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);

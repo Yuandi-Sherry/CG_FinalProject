@@ -15,6 +15,7 @@
 using namespace std;
 double PI = 3.14159265;
 
+// function prototype
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
@@ -25,14 +26,20 @@ void compileShader(unsigned int & shader, const char * filename, const int & sha
 void initGUI(GLFWwindow* window);
 void displayGUI(GLFWwindow* window);
 GLFWwindow* initialize();
-int windowWidth = 1200;
-int windowHeight = 1200;
-float lastX = windowWidth / 2.0;
-float lastY = windowHeight / 2.0;
 static void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
+
+// extern variables
+
+int windowWidth = 1600;
+int windowHeight = 900;
+float lastX = windowWidth / 2.0;
+float lastY = windowHeight / 2.0;
+
+
+
 // ×ÅÉ«Æ÷ÎÄ¼þ
 const char* vertexShaderFile = "shader.vs";
 const char* fragmentShaderFile = "shader.fs";
@@ -44,13 +51,9 @@ void processInput(GLFWwindow * window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-//---------------------debug--------------------------
-unsigned int loadCubemap(vector<std::string> faces);
-//---------------------debug--------------------------
-
 ImVec4 clear_color = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 TreeGeneration treeGeneration;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 70.0f));
 Skybox skybox;
 int main() {
 	GLFWwindow* window = initialize();
