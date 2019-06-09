@@ -130,10 +130,12 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="TreeGeneration.cpp" />
     <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="WaterSimulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -147,11 +149,14 @@
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="LSystem.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="TreeGeneration.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="WaterSimulation.h" />
+    <ClInclude Include="Wave.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="colorShader.fs" />
@@ -161,6 +166,8 @@
     <None Include="skybox.vs" />
     <None Include="textureShader.fs" />
     <None Include="textureShader.vs" />
+    <None Include="water.fs" />
+    <None Include="water.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

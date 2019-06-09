@@ -31,6 +31,12 @@
     <Filter Include="头文件\Assistance">
       <UniqueIdentifier>{0f8a7dbd-521f-4d12-bd0f-b896c1a262e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Water">
+      <UniqueIdentifier>{eab2ab36-c727-4828-a2f5-6e7e2efe653a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Water">
+      <UniqueIdentifier>{d69e4a0e-0853-4fb3-a813-7a4a6844fdac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -76,7 +82,13 @@
       <Filter>源文件\Assistance</Filter>
     </ClCompile>
     <ClCompile Include="Skybox.cpp">
+      <Filter>源文件\Assistance</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterSimulation.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>源文件\Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,7 +138,16 @@
       <Filter>头文件\Assistance</Filter>
     </ClInclude>
     <ClInclude Include="Skybox.h">
+      <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterSimulation.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>头文件\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Wave.h">
+      <Filter>头文件\Water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +170,12 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="skybox.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="water.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="water.fs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

@@ -5,10 +5,22 @@
 #include <iostream>
 using namespace std;
 
+extern int windowWidth;
+extern int windowHeight;
 
 glm::mat4 Camera::GetViewMatrix()
 {
 	return glm::lookAt(Position, Position + Front, Up);
+}
+
+
+glm::mat4 Camera::GetProjectionMatrix()
+{
+	return  glm::perspective(glm::radians(Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+}
+
+glm::vec3 Camera::GetPosition() {
+	return Position;
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
