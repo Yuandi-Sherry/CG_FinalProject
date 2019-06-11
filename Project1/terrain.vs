@@ -42,6 +42,7 @@ void main() {
     // World (triangle grid) coordinates are (-1,-1) x (1,1).
     // Texture (height map) coordinates are (0,0) x (1,1).
     vec2 UV = (position + 1.0) / 2.0;
+	// red channel define the height
     float height = texture(heightMapTex, UV).r;
 
 	// Generate wave using sin function

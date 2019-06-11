@@ -131,6 +131,7 @@
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="rendering_context.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="rendering_context.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Terrain.h" />
@@ -163,6 +165,8 @@
   <ItemGroup>
     <None Include="colorShader.fs" />
     <None Include="colorShader.vs" />
+    <None Include="heightMap.vs" />
+    <None Include="heightMap.fs" />
     <None Include="imgui.ini" />
     <None Include="skybox.fs" />
     <None Include="skybox.vs" />

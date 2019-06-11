@@ -17,12 +17,23 @@ public:
 	void display();
 private:
 	Shader terrainShader;
-	GLuint terrainTexture;
+	Shader heightMapShader;
+	// GLuint terrainTexture;
 	GLuint terrainVAO;
 	GLuint terrainVBO;
 	GLuint terrainEBO;
+	GLuint shadowTexture;
+	GLuint heightMapTexture;
+	void geneTriGrid();
 
-	
+	// heightMap
+	void geneHeightMap();
+	GLuint permTableTexture;
+	GLuint gradVectTexture;
+	GLuint heightMapVAO;
+	GLuint heightMapVBO;
+	void genePermutationTable();
+	void geneGradientVectors();
 };
 
 

@@ -67,10 +67,10 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
-		water.display();
-		skybox.display();
-		treeGeneration.display();
-		// terrain.display();
+		//water.display();
+		//skybox.display();
+		//treeGeneration.display();
+		terrain.display();
 
 		
 		glfwSwapBuffers(window);

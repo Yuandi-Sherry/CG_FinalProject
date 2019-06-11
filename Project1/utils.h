@@ -4,10 +4,14 @@
 #include <iostream>
 
 #include <glad/glad.h>
+#include <vector>
 using namespace std;
+
 class utils
 {
 public:
+	static int _nTextures;
+	static vector <int> _textureIDs;
 	static GLuint loadTexture(GLchar* path) {
 		// Generate texture ID and load texture data 
 		GLuint textureID;
@@ -155,9 +159,21 @@ public:
 	}
 
 
-	GLuint setTexture(const GLuint textureIndex, int textureID, std::string uniformName, GLenum target) {
+	static GLuint setTexture(const GLuint textureIndex, int textureID, Shader shader, std::string uniformName) {
 
-		/// Create a texture if no ID was passed.
+		if (textureID < 0)
+			glGenTextures(1, (GLuint*)&textureID);
+
+		glActiveTexture(GL_TEXTURE0 + textureIndex);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		if (!uniformName.empty()) {
+			shader.setInt(uniformName.c_str(), textureIndex);
+		}
+
+		_textureIDs.push_back(textureID);
+		_nTextures++;
+		return textureID;
 
 	}
 private:

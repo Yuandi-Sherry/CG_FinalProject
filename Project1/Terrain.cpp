@@ -7,12 +7,14 @@
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include "Camera.h"
+#include <vector>
 extern Camera camera;
 static GLuint textureNumber;
 const unsigned int N = 128;
 const unsigned int nVertices = N * N;
 const unsigned int nIndices = (N - 1)*(N - 1) * 6;
-
+int utils::_nTextures = 0;
+vector<int> utils::_textureIDs;
 Terrain::Terrain(){
 	//init();
 }
@@ -23,46 +25,43 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
+	
 	terrainShader.init("terrain.vs", "terrain.fs");
-	terrainTexture = utils::loadTexture((GLchar * )"./Mossy_Rock.tga");
+	terrainShader.use();
+	geneHeightMap();
+	cout << "heightMapTexture " << heightMapTexture << endl;
+	//heightMapTexture = utils::loadTexture((GLchar *)"./Mossy_Rock.tga");
+	/// RenderingContext::init(terrain_vshader, terrain_fshader);
+	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 
-	glGenVertexArrays(1, &terrainVAO);
-	glBindVertexArray(terrainVAO);
-	// generate 
-		/// Generate the vertices (line by line) : 16^2 = 256 vertices.
-	glm::vec2 vertices[nVertices];
-	for (int y = 0; y < N; y++) {
-		for (int x = 0; x < N; x++) {
-			vertices[y*N + x] = glm::vec2(float(2.0*x) / (N - 1) - 1, float(2.0*y) / (N - 1) - 1);
-		}
-	}
-	// cout << sizeof(vertices) << " = " << nVertices * sizeof(glm::vec2) << endl;
+	/// Load material textures and bind them to textures 1 - 6.
+	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
+	cout << "sandTexture " << sandTexture << endl;
+	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
 
-	/// Copy the vertices to GPU in a vertex buffer.
-	glGenBuffers(1, &terrainVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
+	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
+	
+	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
+	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
 
-	/// Indices that form the triangles.
-	/// Grid of 15x15 squares : 225 squares -> 450 triangles -> 1350 indices.
-	unsigned int indices[nIndices];
-	for (int y = 0; y < N - 1; y++) {
-		for (int x = 0; x < N - 1; x++) {
-			/// Upper left triangle of the square.
-			indices[y*(N - 1) * 6 + x * 6 + 0] = y * N + x + 0;
-			indices[y*(N - 1) * 6 + x * 6 + 1] = y * N + x + 1;
-			indices[y*(N - 1) * 6 + x * 6 + 2] = y * N + x + N;
-			/// Lower right triangle of the square.
-			indices[y*(N - 1) * 6 + x * 6 + 3] = y * N + x + 1;
-			indices[y*(N - 1) * 6 + x * 6 + 4] = y * N + x + N + 1;
-			indices[y*(N - 1) * 6 + x * 6 + 5] = y * N + x + N;
-		}
-	}
+	GLuint stoneTexture = utils::loadTexture((GLchar *)"./textures/stone_2.tga");
+	utils::setTexture(4, stoneTexture, terrainShader, "stoneTex");
 
-	// Copy the indices to GPU in an index buffer.
-	glGenBuffers(1, &terrainEBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	GLuint waterTexture = utils::loadTexture((GLchar *)"./textures/water.tga");
+	utils::setTexture(5, waterTexture, terrainShader, "waterTex");
+
+	GLuint snowTexture = utils::loadTexture((GLchar *)"./textures/snow.tga");
+	utils::setTexture(6, snowTexture, terrainShader, "snowTex");
+	cout << "snowTexture " << snowTexture << endl;
+
+	GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga");
+	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
+	
+	utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");
+
+	geneTriGrid();
+	
 
 	/// light
 	terrainShader.use();
@@ -81,7 +80,6 @@ void Terrain::init() {
 	glm::vec3 ks(0.35f, 0.25f, 0.35f);
 	float p = 60.0f;
 
-	
 	terrainShader.setVec3("ka", ka);
 	terrainShader.setVec3("kd", kd);
 	terrainShader.setVec3("ks", ks);
@@ -89,8 +87,13 @@ void Terrain::init() {
 
 	terrainShader.setInt("N", N);
 
-	cout << terrainVAO << " " << terrainVBO << " " << terrainEBO << endl;
 
+	glGenVertexArrays(1, &terrainVAO);
+	glBindVertexArray(terrainVAO);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);
+	// terrainVAO = glGetAttribLocation(terrainShader.ID, "position");
+	// cout << terrainVAO <<" "  << terrainVBO <<  endl;
 	/// Set uniform IDs.
 	//_modelviewID = glGetUniformLocation(_programID, "modelview");
 	//_projectionID = glGetUniformLocation(_programID, "projection");
@@ -103,7 +106,7 @@ void Terrain::init() {
 void Terrain::display() {
 
 	/// Set the context FBO as the rendering target.
-	//glBindFramebuffer(GL_FRAMEBUFFER, _frameBufferID);
+	//glBindFramebuffer(GL_FRAMEBUFFER, _heightMapVBO);
 
 	/// Specify the transformation from normalized device coordinates
 	/// to texture/window coordinates.
@@ -112,9 +115,10 @@ void Terrain::display() {
 	/// Select the shader program.
 	terrainShader.use();
 	/// Bind all the necessary textures.
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTexture);
+	for (int i = 0; i < utils::_nTextures; ++i) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, utils::_textureIDs[i]);
+	}
 
 	/*
 	 * Bind vertex array
@@ -127,14 +131,15 @@ void Terrain::display() {
 	/// Vertex attribute "position" points to data from the currently binded array buffer.
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-	glEnableVertexAttribArray(terrainVAO);
-	glVertexAttribPointer(terrainVAO, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	
 
+	terrainShader.use();
 	/// Update the content of the uniforms.
 	terrainShader.setMat4("modelview", camera.GetViewMatrix());
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
-	
+	static float time = 0;
+	terrainShader.setFloat("time", time);
 
 	/// Spot light projection.
 	float fieldOfView = 45.0f;
@@ -175,4 +180,176 @@ void Terrain::display() {
 
 
 	glDisableVertexAttribArray(terrainVAO);
+}
+
+void Terrain::geneTriGrid() {
+	// generate 
+		/// Generate the vertices (line by line) : 16^2 = 256 vertices.
+	glm::vec2 vertices[nVertices];
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			vertices[y*N + x] = glm::vec2(float(2.0*x) / (N - 1) - 1, float(2.0*y) / (N - 1) - 1);
+		}
+	}
+	// cout << sizeof(vertices) << " = " << nVertices * sizeof(glm::vec2) << endl;
+
+	/// Copy the vertices to GPU in a vertex buffer.
+	glGenBuffers(1, &terrainVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	/// Indices that form the triangles.
+	/// Grid of 15x15 squares : 225 squares -> 450 triangles -> 1350 indices.
+	unsigned int indices[nIndices];
+	for (int y = 0; y < N - 1; y++) {
+		for (int x = 0; x < N - 1; x++) {
+			/// Upper left triangle of the square.
+			indices[y*(N - 1) * 6 + x * 6 + 0] = y * N + x + 0;
+			indices[y*(N - 1) * 6 + x * 6 + 1] = y * N + x + 1;
+			indices[y*(N - 1) * 6 + x * 6 + 2] = y * N + x + N;
+			/// Lower right triangle of the square.
+			indices[y*(N - 1) * 6 + x * 6 + 3] = y * N + x + 1;
+			indices[y*(N - 1) * 6 + x * 6 + 4] = y * N + x + N + 1;
+			indices[y*(N - 1) * 6 + x * 6 + 5] = y * N + x + N;
+		}
+	}
+
+	// Copy the indices to GPU in an index buffer.
+	glGenBuffers(1, &terrainEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+}
+
+void Terrain::geneHeightMap() {
+	// Height map texture size.
+	const int texWidth(1024);
+	const int texHeight(1024);
+
+	heightMapShader.init("heightMap.vs", "heightMap.fs");
+
+	heightMapShader.use();
+
+	// Vertex array.
+
+	glGenVertexArrays(1, &heightMapVAO);
+	glBindVertexArray(heightMapVAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);
+
+	genePermutationTable();
+	geneGradientVectors();
+
+	glGenTextures(1, &heightMapTexture);
+	glBindTexture(GL_TEXTURE_2D, heightMapTexture);
+	// Empty image (no data), one color component, unclamped 32 bits float.
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, texWidth, texHeight, 0, GL_RED, GL_FLOAT, 0);
+	// Simple filtering (needed).
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, heightMapTexture, 0);
+	//    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
+	//    glDrawBuffers(1, drawBuffers);
+
+		/// Check that our framebuffer is complete.
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cerr << "Heightmap framebuffer not complete." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	/// Fullscreen quad : fragment shader is executed on evey pixel of the texture.
+	const GLfloat vertices[] = {
+		-1.0f, -1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f,
+	};
+	glGenBuffers(1, &heightMapVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, heightMapVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+
+
+	/// Render the 2 triangles (6 vertices).
+	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);
+
+	/// Clean up the now useless objects to free GPU memory.
+	glDeleteBuffers(1, &heightMapVBO);
+	glDeleteTextures(1, &gradVectTexture);
+	glDeleteTextures(1, &permTableTexture);
+	glDeleteProgram(heightMapShader.ID);
+	glDeleteVertexArrays(1, &heightMapVAO);
+}
+
+void Terrain::genePermutationTable() {
+	// Pseudo-randomly generate the permutation table.
+	const int size(256);
+	//    GLubyte permutationTable[size];
+	GLfloat permutationTable[size];
+	for (int k = 0; k < size; ++k)
+		permutationTable[k] = k;
+
+	// Seed the pseudo-random generator for reproductability.
+	std::srand(10);
+
+	// Fisher-Yates / Knuth shuffle.
+//    GLubyte tmp;
+	GLfloat tmp;
+	for (int k = size - 1; k > 0; --k) {
+		// Random number with 0 <= rnd <= k.
+		GLuint idx = int(float(k) * std::rand() / RAND_MAX);
+		tmp = permutationTable[k];
+		permutationTable[k] = permutationTable[idx];
+		permutationTable[idx] = tmp;
+	}
+
+	// Print the permutation table.
+	for(int k=0; k<size; ++k)
+	    cout << permutationTable[k] << " ";
+
+	/// Bind the permutation table to texture 0.
+	const GLuint permTableTex = 0;
+	glActiveTexture(GL_TEXTURE0 + permTableTex);
+	
+	heightMapShader.setInt("permTableTex", permTableTex);
+	glGenTextures(1, &permTableTexture);
+	glBindTexture(GL_TEXTURE_1D, permTableTexture);
+
+	// Filled image, one color component, unclamped 32 bits float.
+	// GL_R8UI or GL_R32I does not work on my machine.
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, size, 0, GL_RED, GL_FLOAT, permutationTable);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+
+void Terrain::geneGradientVectors() {
+	/// Gradients for 2D noise.
+	static GLfloat gradients[] = {
+		1.0f,  1.0f,
+	   -1.0f,  1.0f,
+		1.0f, -1.0f,
+	   -1.0f, -1.0f,
+		0.0f,  1.0f,
+		0.0f, -1.0f,
+		1.0f,  0.0f,
+	   -1.0f,  0.0f,
+	};
+
+	gradVectTexture = 1;
+	glActiveTexture(GL_TEXTURE0 + gradVectTexture);
+	
+	heightMapShader.setInt("gradVectTex", gradVectTexture);
+	GLuint gradVectTexID;
+	glGenTextures(1, &gradVectTexID);
+	glBindTexture(GL_TEXTURE_1D, gradVectTexID);
+	// Filled image, two color components, unclamped 32 bits float.
+	// GL_RG8I does not work on my machine.
+	//glTexImage1D(GL_TEXTURE_1D, 0, GL_RG8I, nVectors, 0, GL_RG, GL_BYTE, gradients);
+	glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, 8, 0, GL_RG, GL_FLOAT, gradients);
+
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
 }
