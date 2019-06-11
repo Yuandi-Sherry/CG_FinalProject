@@ -37,6 +37,12 @@
     <Filter Include="源文件\Water">
       <UniqueIdentifier>{d69e4a0e-0853-4fb3-a813-7a4a6844fdac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Terrain">
+      <UniqueIdentifier>{0cb54d56-629e-4fa1-88d1-e49902a1b455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Terrain">
+      <UniqueIdentifier>{48d62337-d6ed-4af5-9c3e-ad4576994205}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -84,11 +90,14 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>源文件\Assistance</Filter>
     </ClCompile>
-    <ClCompile Include="WaterSimulation.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>源文件\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterSimulation.cpp">
+      <Filter>源文件\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>源文件\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +158,9 @@
     <ClInclude Include="Wave.h">
       <Filter>头文件\Water</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>头文件\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="textureShader.fs">
@@ -176,6 +188,12 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="water.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="terrain.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="terrain.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

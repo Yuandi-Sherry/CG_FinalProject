@@ -11,6 +11,7 @@
 #include "TreeGeneration.h"
 #include "Skybox.h"
 #include "WaterSimulation.h"
+#include "Terrain.h"
 #define N 888
 
 using namespace std;
@@ -45,12 +46,14 @@ TreeGeneration treeGeneration;
 Camera camera(glm::vec3(0.0f,20.0f, 70.0f));
 Skybox skybox;
 WaterSimulation water;
+Terrain terrain;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
 	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, -20.0f, -50.0f)));
 	skybox.init();
 	water.init();
+	terrain.init();
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -66,8 +69,8 @@ int main() {
 		
 		water.display();
 		skybox.display();
-
-
+		treeGeneration.display();
+		// terrain.display();
 
 		
 		glfwSwapBuffers(window);
