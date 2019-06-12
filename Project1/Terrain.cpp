@@ -30,7 +30,7 @@ void Terrain::init() {
 	terrainShader.use();
 	geneHeightMap();
 	cout << "heightMapTexture " << heightMapTexture << endl;
-	//heightMapTexture = utils::loadTexture((GLchar *)"./Mossy_Rock.tga");
+	heightMapTexture = utils::loadTexture((GLchar *)"./Mossy_Rock.tga");
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 
@@ -94,7 +94,7 @@ void Terrain::init() {
 	glEnableVertexAttribArray(0);
 	// terrainVAO = glGetAttribLocation(terrainShader.ID, "position");
 	// cout << terrainVAO <<" "  << terrainVBO <<  endl;
-	/// Set uniform IDs.
+	// Set uniform IDs.
 	//_modelviewID = glGetUniformLocation(_programID, "modelview");
 	//_projectionID = glGetUniformLocation(_programID, "projection");
 
@@ -233,8 +233,8 @@ void Terrain::geneHeightMap() {
 
 	glGenVertexArrays(1, &heightMapVAO);
 	glBindVertexArray(heightMapVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
+	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);*/
 
 	genePermutationTable();
 	geneGradientVectors();
@@ -270,11 +270,12 @@ void Terrain::geneHeightMap() {
 	glBindBuffer(GL_ARRAY_BUFFER, heightMapVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);
 
 
 	/// Render the 2 triangles (6 vertices).
-	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);
 
 	/// Clean up the now useless objects to free GPU memory.
