@@ -74,26 +74,6 @@ void RenderingContext::clean() {
 }
 
 
-GLuint RenderingContext::set_texture(const GLuint textureIndex, int textureID, std::string uniformName, GLenum target) {
-
-	/// Create a texture if no ID was passed.
-	if (textureID < 0)
-		glGenTextures(1, (GLuint*)&textureID);
-
-	/// "Bind" the newly created texture to the context : all future texture functions will modify this texture.
-	glActiveTexture(GL_TEXTURE0 + textureIndex);
-	glBindTexture(target, textureID);
-
-	if (!uniformName.empty()) {
-		GLuint uniformID = glGetUniformLocation(_programID, uniformName.c_str());
-		glUniform1i(uniformID, textureIndex);
-	}
-
-	_textureIDs[textureIndex] = textureID;
-	_nTextures = textureIndex + 1;
-
-	return textureID;
-}
 
 
 GLuint RenderingContext::get_texture_ID(const GLuint textureIndex) const {
