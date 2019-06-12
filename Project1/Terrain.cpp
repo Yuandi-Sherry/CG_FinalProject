@@ -66,16 +66,16 @@ void Terrain::init() {
 	terrainShader.use();
 	geneHeightMap();
 	cout << "heightMapTexture " << heightMapTexture << endl;
-	// heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	//heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 
 	/// Load material textures and bind them to textures 1 - 6.
 	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
-	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
+	utils::setTexture(1, -1, terrainShader, "sandTex");
 
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
-	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
+	utils::setTexture(2, -1, terrainShader, "iceMoutainTex");
 
 	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
 	utils::setTexture(3, treeTexture, terrainShader, "treeTex");

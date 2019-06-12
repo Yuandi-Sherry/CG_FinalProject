@@ -45,13 +45,14 @@ in vec3 view_dir;
 layout(location = 0) out vec3 color;
 
 void main() {
+
 	// Different levels of height for texture mapping
 	const float ground = 0.01f;
     const float sandMax = 0.015f;
     const float forestMin = 0.025f;
     const float forestMax = 0.25f;
     const float snowMin= 0.315f;
-    const float snowMax = 0.425f;
+    const float snowMax = 0.425;
 
     float grid_size = 2.0/float(N);
     float tex_size = grid_size/2.0;
@@ -59,14 +60,15 @@ void main() {
     vec2 size = vec2(2.0/1024.0, 0.0);   //1024 is the size of the generated height map
 
     //current UV coordinate
-    vec2 UV = vec2((displaced.xy +1.0)/2.0); // from(-1,1) => (0, 1)
-	//color = (displaced.z > 0.008) ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0) ; // 全部 > -0.01, <0.008
-	// if it is water region, use normal from normal map 
-	// otherwise need to calculate it 
+    vec2 UV = vec2((displaced.xy +1.0)/2.0);
+
+	//if it is water region, use normal from normal map 
+	//otherwise need to calculate it 
 	vec3 normal;
-	bool debug = true;
-	if(debug) {
-	color = vec3(0, 1.0, 0);
+	if (displaced.z < ground) {
+		normal = normalize(texture(waterNormalMap,UV).rgb);
+	} else {
+		//first calculate the normal vector using finite difference
 		float s11 = texture(heightMapTex, UV).r;
 		float s01 = textureOffset(heightMapTex, UV, off.xy).r;
 		float s21 = textureOffset(heightMapTex, UV, off.zy).r;
@@ -77,26 +79,7 @@ void main() {
 		vec3 vb = normalize(vec3(0.0, size.x,  s12 - s10));
 		vec3 tmp = cross(va,vb);
 		normal = normalize(vec3(tmp.xy, 2*tmp.z));
-	} else {
-		color = vec3(1, 0, 0);
-		if (displaced.z < ground) {
-			color = vec3(1, 1.0, 0);
-			normal = normalize(texture(waterNormalMap,UV).rgb);
-		} else {
-			//first calculate the normal vector using finite difference
-			float s11 = texture(heightMapTex, UV).r;
-			float s01 = textureOffset(heightMapTex, UV, off.xy).r;
-			float s21 = textureOffset(heightMapTex, UV, off.zy).r;
-			float s10 = textureOffset(heightMapTex, UV, off.yx).r;
-			float s12 = textureOffset(heightMapTex, UV, off.yz).r;
-
-			vec3 va = normalize(vec3(size.xy, s21 - s01));
-			vec3 vb = normalize(vec3(0.0, size.x,  s12 - s10));
-			vec3 tmp = cross(va,vb);
-			normal = normalize(vec3(tmp.xy, 2*tmp.z));
-		}
 	}
-	
 
     // Normalize the vectors.
     vec3 L = normalize(light_dir);
@@ -113,73 +96,75 @@ void main() {
 
     float slope = smoothstep(0.35, 0.65 , normal.z);
 
-    
-    if(debug) {
-		// color = vec3(0, 0, 1);
-		//mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
-		// mapped = texture2D(sandTex, displaced.xy).rgb;
-		// vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-		// vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
-		// mapped = mix(stone, sand, slope);         
-		//vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-			//vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
-			///mapped = mix(stone, forest, slope);
-		// mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
-		// mapped = texture(snowTex, 60*displaced.xy).rgb;
-		mapped = texture(sandTex, displaced.xy).rgb;
-	// 	mapped = texture(sandTex, displaced.xy).rgb; // good
-		//mapped = vec3(0.5, 0.5,0.5);
+    if(displaced.z < ground) {
+        mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
+    } else if (displaced.z < sandMax) {
+        mapped = texture2D(sandTex, displaced.xy).rgb;
+    } else if (displaced.z < forestMin) {  //mix between sand, rock
+        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
+        vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
+        mapped = mix(stone, sand, slope);            
+    } else if (displaced.z  < forestMax) {  //mix between forest and rock
+        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
+        vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
+        mapped = mix(stone, forest, slope);
+    } else if (displaced.z < snowMin) { //mix between forest, rock and snow
+        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
+        vec3 ice = texture2D(iceMoutainTex, 10*displaced.xy).rgb;
+        vec3 forest = texture2D(treeTex, 20*displaced.xy).rgb;
+        if (slope > 0.5)
+            mapped = mix(stone, forest, slope);
+        else
+            mapped = mix(forest, ice, 2.0*(displaced.z-forestMax)/(snowMin-forestMax));
+    } else if (displaced.z < snowMax) {
+        vec3 snow = texture2D(snowTex, 60*displaced.xy).rgb;
+        vec3 iceMoutain = texture2D(iceMoutainTex, 20*displaced.xy).rgb;
+        mapped = mix(iceMoutain, snow, (displaced.z - snowMin)/(snowMax-snowMin));
     } else {
-	    if(displaced.z < ground) { // bug: 一致都是这个为真
-			mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
-		
-			//color = mapped * 100;
-		} else if (displaced.z < sandMax) {
-			mapped = texture2D(sandTex, displaced.xy).rgb;
-			//color = vec3(0.0, 1.0, 0.0);
-		} else if (displaced.z < forestMin) {  //mix between sand, rock
-			vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-			vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
-			mapped = mix(stone, sand, slope);            
-		} else if (displaced.z  < forestMax) {  //mix between forest and rock
-			vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-			vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
-			mapped = mix(stone, forest, slope);
-		} else if (displaced.z < snowMin) { //mix between forest, rock and snow
-			vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-			vec3 ice = texture2D(iceMoutainTex, 10*displaced.xy).rgb;
-			vec3 forest = texture2D(treeTex, 20*displaced.xy).rgb;
-			if (slope > 0.5)
-				mapped = mix(stone, forest, slope);
-			else
-				mapped = mix(forest, ice, 2.0*(displaced.z-forestMax)/(snowMin-forestMax));
-		} else if (displaced.z < snowMax) {
-			vec3 snow = texture2D(snowTex, 60*displaced.xy).rgb;
-			vec3 iceMoutain = texture2D(iceMoutainTex, 20*displaced.xy).rgb;
-			mapped = mix(iceMoutain, snow, (displaced.z - snowMin)/(snowMax-snowMin));
-		} else {
-			mapped = texture2D(snowTex, 60*displaced.xy).rgb;
-		}
+        mapped = texture2D(snowTex, 60*displaced.xy).rgb;
     }
 
-	
+    //Ambient color component
+    vec3 ambient = Ia * ka * mapped;
+    // Assemble the colors.
+    color = ambient + diffuse + specular;
 
 
-	//Ambient color component
-	vec3 ambient = Ia * ka * mapped ;
-	// Assemble the colors.
-	color =ambient + diffuse + specular;
-	//color =ambient;
-	// color = mapped;
-	vec3 light = vec3(0.8);
 
-	//Shadow / visibility
-	float bias = 0.005; 
-	float visibility = 1.0;
-	//if(texture(shadowMapTex, ShadowCoord.xy).z < ShadowCoord.z - bias) {
-		//visibility = 0.0;
-	//}
-	
-   
 
+    vec3 light = vec3(0.8);
+
+    ///>>>>>>>>>> TODO >>>>>>>>>>>
+    /// TODO: Practical 6.
+    /// 1) Assign the texture color in tex at position UV to diffuse instead of the interpolated vertexcolor
+    ///<<<<<<<<<< TODO <<<<<<<<<<<
+//    vec3 diffuse = vcolor;
+
+    //Shadow / visibility
+    float bias = 0.005;  // 0.001
+    ///>>>>>>>>>> TODO >>>>>>>>>>>
+    /// TODO: Practical 6.
+    /// 2) query the visibility of ShadowCoord in shadowMap, bias the query by subtracting bias. What happens without bias?
+    /// Hint: Divide the ShadowCoord by its w-component before using it as a 3d point.
+    /// Ressources: https://www.opengl.org/wiki/Sampler_(GLSL)#Shadow_samplers
+    ///<<<<<<<<<< TODO <<<<<<<<<<<
+    float visibility = 1.0;
+    //if(texture(shadowMapTex, ShadowCoord.xy).z  <  ShadowCoord.z) {
+    if(texture(shadowMapTex, ShadowCoord.xy).z < ShadowCoord.z - bias) {
+        visibility = 0.0;
+    }
+
+//    color =
+//     // Ambient : simulates indirect lighting
+//     MaterialAmbientColor +
+//     // Diffuse : "color" of the object
+//     visibility * MaterialDiffuseColor * LightColor * LightPower * cosTheta+
+//     // Specular : reflective highlight, like a mirror
+//     visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5);
+
+    //color = ambient + visibility * diffuse + visibility * specular;
+    //color = visibility * diffuse + visibility * specular;
+    //color = vec3(texture(shadowMapTex, ShadowCoord.xy));
+    //color = vec3(ShadowCoord.z);
+    //clor = ShadowCoord.xyz;
 }
