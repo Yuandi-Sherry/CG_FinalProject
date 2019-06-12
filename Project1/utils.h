@@ -166,9 +166,8 @@ public:
 			glGenTextures(1, (GLuint*)&textureID);
 		}
 			
-
 		glActiveTexture(GL_TEXTURE0 + textureIndex);
-		cout << "[glActiveTexture] " << textureIndex << endl;
+		cout << "[glActiveTexture] " << textureIndex << " ID: " << textureID <<  endl;
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
 

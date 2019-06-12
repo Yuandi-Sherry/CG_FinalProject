@@ -43,14 +43,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 TreeGeneration treeGeneration;
-Camera camera(glm::vec3(0.0f,20.0f, 70.0f));
+Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
-	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, -20.0f, -50.0f)));
+	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
 	skybox.init();
 	water.init();
 	terrain.init();

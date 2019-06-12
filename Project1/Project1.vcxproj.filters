@@ -102,6 +102,9 @@
     <ClCompile Include="rendering_context.cpp">
       <Filter>源文件\Assistance</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain2.cpp">
+      <Filter>源文件\Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imconfig.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="rendering_context.h">
       <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain2.h">
+      <Filter>源文件\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

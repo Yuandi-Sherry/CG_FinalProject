@@ -26,11 +26,47 @@ Terrain::~Terrain()
 
 void Terrain::init() {
 	// init Shader
+	/*terrainShader.init("terrain.vs", "terrain.fs");
+	terrainShader.use();
+	geneHeightMap();
+	cout << "heightMapTexture " << heightMapTexture << endl;
+	// heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	/// RenderingContext::init(terrain_vshader, terrain_fshader);
+	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
+
+	/// Load material textures and bind them to textures 1 - 6.
+	
+	
+	utils::setTexture(1, -1, terrainShader, "sandTex");
+	utils::loadTexture((GLchar *)"./textures/sand.tga"); // ´í->sand
+
+	utils::setTexture(2, -1, terrainShader, "iceMoutainTex");
+	utils::loadTexture((GLchar *)"./textures/dordona_range.tga"); // ´í->sand
+	//GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga"); // ´í->forest
+	//utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
+	
+	utils::loadTexture((GLchar *)"./textures/forest.tga");// ´í->stone
+	utils::setTexture(3, -1, terrainShader, "treeTex");
+
+	utils::loadTexture((GLchar *)"./textures/stone_2.tga");// ´í->waterTex
+	utils::setTexture(4, -1, terrainShader, "stoneTex");
+
+	utils::loadTexture((GLchar *)"./textures/water.tga"); // ´í->snow
+	utils::setTexture(5, -1, terrainShader, "waterTex");
+
+	utils::loadTexture((GLchar *)"./textures/snow.tga"); // ´í -> waterNormalMap
+	utils::setTexture(6, -1, terrainShader, "snowTex");
+
+	utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga"); // ¶Ô
+	utils::setTexture(7, -1, terrainShader, "waterNormalMap");
+	
+	//utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");*/
+
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
-	//geneHeightMap();
+	geneHeightMap();
 	cout << "heightMapTexture " << heightMapTexture << endl;
-	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	// heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 
@@ -40,7 +76,7 @@ void Terrain::init() {
 
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
 	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
-	
+
 	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
 	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
 
@@ -55,8 +91,6 @@ void Terrain::init() {
 
 	GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga");
 	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
-	
-	utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");
 
 	geneTriGrid();
 	
@@ -90,15 +124,6 @@ void Terrain::init() {
 	glBindVertexArray(terrainVAO);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(0);
-	// terrainVAO = glGetAttribLocation(terrainShader.ID, "position");
-	// cout << terrainVAO <<" "  << terrainVBO <<  endl;
-	/// Set uniform IDs.
-	//_modelviewID = glGetUniformLocation(_programID, "modelview");
-	//_projectionID = glGetUniformLocation(_programID, "projection");
-
-	//_timeID = glGetUniformLocation(_programID, "time");
-
-	//_vertexAttribID = glGetAttribLocation(_programID, "position");
 }
 
 void Terrain::display() {
@@ -129,11 +154,12 @@ void Terrain::display() {
 	/// Vertex attribute "position" points to data from the currently binded array buffer.
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-	
+	glEnableVertexAttribArray(terrainVAO);
+	glVertexAttribPointer(terrainVAO, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	terrainShader.use();
 	/// Update the content of the uniforms.
-	terrainShader.setMat4("modelview", camera.GetViewMatrix());
+	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(20.0, 20.0, 1.0)));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
 	static float time = 0;

@@ -157,6 +157,7 @@ void TreeGeneration::initLeaf() {
 void TreeGeneration::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
+	cout << "branch Tex" << branchTexture << endl;
 	generateCylinder();
 	branchShader.use();
 	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
