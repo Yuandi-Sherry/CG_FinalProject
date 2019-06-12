@@ -32,7 +32,7 @@ public:
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else {
-			cout << "fail to load texture in 1" << endl;
+			cout << "fail to load texture in " << path << endl;
 		}
 		stbi_image_free(image);
 		return textureID;
@@ -161,10 +161,15 @@ public:
 
 	static GLuint setTexture(const GLuint textureIndex, int textureID, Shader shader, std::string uniformName) {
 
-		if (textureID < 0)
+		if (textureID < 0) {
+			cout << "[DEBUG]" <<  uniformName << " id < 0" << endl;
 			glGenTextures(1, (GLuint*)&textureID);
+		}
+			
 
 		glActiveTexture(GL_TEXTURE0 + textureIndex);
+		cout << "[glActiveTexture] " << textureIndex << endl;
+
 		glBindTexture(GL_TEXTURE_2D, textureID);
 
 		if (!uniformName.empty()) {

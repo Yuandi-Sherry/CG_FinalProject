@@ -25,18 +25,17 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
-	
+	// init Shader
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
-	geneHeightMap();
+	//geneHeightMap();
 	cout << "heightMapTexture " << heightMapTexture << endl;
-	//heightMapTexture = utils::loadTexture((GLchar *)"./Mossy_Rock.tga");
+	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 
 	/// Load material textures and bind them to textures 1 - 6.
 	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
-	cout << "sandTexture " << sandTexture << endl;
 	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
 
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
@@ -53,7 +52,6 @@ void Terrain::init() {
 
 	GLuint snowTexture = utils::loadTexture((GLchar *)"./textures/snow.tga");
 	utils::setTexture(6, snowTexture, terrainShader, "snowTex");
-	cout << "snowTexture " << snowTexture << endl;
 
 	GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga");
 	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
@@ -87,7 +85,7 @@ void Terrain::init() {
 
 	terrainShader.setInt("N", N);
 
-
+	// initVAO
 	glGenVertexArrays(1, &terrainVAO);
 	glBindVertexArray(terrainVAO);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
@@ -193,7 +191,7 @@ void Terrain::geneTriGrid() {
 	}
 	// cout << sizeof(vertices) << " = " << nVertices * sizeof(glm::vec2) << endl;
 
-	/// Copy the vertices to GPU in a vertex buffer.
+	// init VBO
 	glGenBuffers(1, &terrainVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -214,7 +212,7 @@ void Terrain::geneTriGrid() {
 		}
 	}
 
-	// Copy the indices to GPU in an index buffer.
+	// init EBO
 	glGenBuffers(1, &terrainEBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -226,16 +224,9 @@ void Terrain::geneHeightMap() {
 	const int texHeight(1024);
 
 	heightMapShader.init("heightMap.vs", "heightMap.fs");
-
 	heightMapShader.use();
 
-	// Vertex array.
-
-	glGenVertexArrays(1, &heightMapVAO);
-	glBindVertexArray(heightMapVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-
+	// generate 2 1D texture
 	genePermutationTable();
 	geneGradientVectors();
 
@@ -247,10 +238,9 @@ void Terrain::geneHeightMap() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, heightMapTexture, 0);
 	//    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0};
 	//    glDrawBuffers(1, drawBuffers);
-
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, heightMapTexture, 0);
 		/// Check that our framebuffer is complete.
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		std::cerr << "Heightmap framebuffer not complete." << std::endl;
@@ -266,13 +256,17 @@ void Terrain::geneHeightMap() {
 		 1.0f, -1.0f, 0.0f,
 		 1.0f,  1.0f, 0.0f,
 	};
+
+	// init VBO
 	glGenBuffers(1, &heightMapVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, heightMapVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-
-
-
+	// init VAO, bind position
+	glGenVertexArrays(1, &heightMapVAO);
+	glBindVertexArray(heightMapVAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(0);
 	/// Render the 2 triangles (6 vertices).
 	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);
@@ -308,17 +302,15 @@ void Terrain::genePermutationTable() {
 	}
 
 	// Print the permutation table.
-	for(int k=0; k<size; ++k)
-	    cout << permutationTable[k] << " ";
+	//for(int k=0; k<size; ++k)
+	  //  cout << permutationTable[k] << " ";
 
 	/// Bind the permutation table to texture 0.
-	const GLuint permTableTex = 0;
-	glActiveTexture(GL_TEXTURE0 + permTableTex);
 	
-	heightMapShader.setInt("permTableTex", permTableTex);
 	glGenTextures(1, &permTableTexture);
+	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_1D, permTableTexture);
-
+	heightMapShader.setInt("permTableTex", permTableTexture);
 	// Filled image, one color component, unclamped 32 bits float.
 	// GL_R8UI or GL_R32I does not work on my machine.
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, size, 0, GL_RED, GL_FLOAT, permutationTable);
@@ -338,18 +330,15 @@ void Terrain::geneGradientVectors() {
 	   -1.0f,  0.0f,
 	};
 
-	gradVectTexture = 1;
-	glActiveTexture(GL_TEXTURE0 + gradVectTexture);
-	
+	// GLuint gradVectTexID;
+	glGenTextures(1, &gradVectTexture);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_1D, gradVectTexture);
 	heightMapShader.setInt("gradVectTex", gradVectTexture);
-	GLuint gradVectTexID;
-	glGenTextures(1, &gradVectTexID);
-	glBindTexture(GL_TEXTURE_1D, gradVectTexID);
 	// Filled image, two color components, unclamped 32 bits float.
 	// GL_RG8I does not work on my machine.
 	//glTexImage1D(GL_TEXTURE_1D, 0, GL_RG8I, nVectors, 0, GL_RG, GL_BYTE, gradients);
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, 8, 0, GL_RG, GL_FLOAT, gradients);
-
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 }

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <GLFW/glfw3.h>
 #include "Camera.h"
+#include "Terrain.h"
 
 GLint SLICEX = 20;
 extern double PI;
@@ -13,6 +14,7 @@ extern int windowHeight;
 extern float lastX;
 extern float lastY;
 extern Camera camera;
+extern Terrain terrain;
 TreeGeneration::TreeGeneration() {
 	
 }
@@ -88,7 +90,7 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	}
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, leafTexture);
+	glBindTexture(GL_TEXTURE_2D, terrain.heightMapTexture);
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);

@@ -69,7 +69,7 @@ int main() {
 		
 		//water.display();
 		//skybox.display();
-		//treeGeneration.display();
+		treeGeneration.display();
 		terrain.display();
 
 		
