@@ -90,7 +90,7 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	}
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrain.heightMapTexture);
+	glBindTexture(GL_TEXTURE_2D, leafTexture);
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
@@ -157,6 +157,7 @@ void TreeGeneration::initLeaf() {
 void TreeGeneration::initBranch() {
 	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
+	cout << "branch Tex" << branchTexture << endl;
 	generateCylinder();
 	branchShader.use();
 	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
