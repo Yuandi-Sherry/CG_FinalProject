@@ -15,7 +15,7 @@ public:
 	~Terrain();
 	void init();
 	void display();
-private:
+// private:
 	Shader terrainShader;
 	Shader heightMapShader;
 	// GLuint terrainTexture;

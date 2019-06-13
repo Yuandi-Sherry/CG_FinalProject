@@ -53,7 +53,7 @@ int main() {
 	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, -20.0f, -50.0f)));
 	skybox.init();
 	water.init();
-	//terrain.init();
+	terrain.init();
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -67,10 +67,10 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
-		water.display();
-		skybox.display();
+		//water.display();
+		//skybox.display();
 		treeGeneration.display();
-		//terrain.display();
+		terrain.display();
 
 		
 		glfwSwapBuffers(window);
