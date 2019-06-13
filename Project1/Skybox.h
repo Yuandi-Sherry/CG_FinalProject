@@ -13,8 +13,8 @@ public:
 	~Skybox();
 	void init();
 	void display();
-
-//private:
+	void displayGUI();
+private:
 	GLfloat skyboxVertices[108] = {
 		// Positions          
 		-1.0f,  1.0f, -1.0f,
@@ -64,6 +64,9 @@ public:
 	// skybox pic name
 	vector<std::string> faces;
 	Shader skyboxShader;
+
+	// debug parameter
+	int zoom = 60;
 };
 
 

@@ -45,13 +45,12 @@ in vec3 view_dir;
 layout(location = 0) out vec3 color;
 
 void main() {
+
 	// Different levels of height for texture mapping
-	const float ground = 0.01;
-    const float sandMax = 0.015;
-    const float forestMin = 0.025f;
-    const float forestMax = 0.25f;
-    const float snowMin= 0.315f;
-    const float snowMax = 0.425f;
+	const float ground = 0.01f;
+    const float sandMax = 0.02f;
+    const float forestMin = 0.035f;
+    const float forestMax = 0.45f;
 
     float grid_size = 2.0/float(N);
     float tex_size = grid_size/2.0;
@@ -95,6 +94,7 @@ void main() {
 
     float slope = smoothstep(0.35, 0.65 , normal.z);
 
+<<<<<<< HEAD
    
 
 
@@ -145,4 +145,60 @@ void main() {
 	
    
 
+=======
+    if(displaced.z < ground) {
+        mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
+    } else if (displaced.z < sandMax) {
+        mapped = texture2D(sandTex, displaced.xy).rgb;
+    } else if (displaced.z < forestMin) {  //mix between sand, rock
+        vec3 sand = texture2D(sandTex, 10*displaced.xy).rgb;
+        vec3 forest = texture2D(treeTex, 30*displaced.xy).rgb;
+        mapped = mix(sand, forest, slope);            
+    } else {  //mix between forest and rock
+        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
+        vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
+        mapped = mix(stone, forest, slope);
+    } 
+    //Ambient color component
+    vec3 ambient = Ia * ka * mapped;
+    // Assemble the colors.
+    color = ambient + diffuse + specular;
+
+
+
+
+    vec3 light = vec3(0.8);
+
+    ///>>>>>>>>>> TODO >>>>>>>>>>>
+    /// TODO: Practical 6.
+    /// 1) Assign the texture color in tex at position UV to diffuse instead of the interpolated vertexcolor
+    ///<<<<<<<<<< TODO <<<<<<<<<<<
+//    vec3 diffuse = vcolor;
+
+    //Shadow / visibility
+    float bias = 0.005;  // 0.001
+    ///>>>>>>>>>> TODO >>>>>>>>>>>
+    /// TODO: Practical 6.
+    /// 2) query the visibility of ShadowCoord in shadowMap, bias the query by subtracting bias. What happens without bias?
+    /// Hint: Divide the ShadowCoord by its w-component before using it as a 3d point.
+    /// Ressources: https://www.opengl.org/wiki/Sampler_(GLSL)#Shadow_samplers
+    ///<<<<<<<<<< TODO <<<<<<<<<<<
+    float visibility = 1.0;
+    //if(texture(shadowMapTex, ShadowCoord.xy).z  <  ShadowCoord.z) {
+
+
+//    color =
+//     // Ambient : simulates indirect lighting
+//     MaterialAmbientColor +
+//     // Diffuse : "color" of the object
+//     visibility * MaterialDiffuseColor * LightColor * LightPower * cosTheta+
+//     // Specular : reflective highlight, like a mirror
+//     visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5);
+
+    //color = ambient + visibility * diffuse + visibility * specular;
+    //color = visibility * diffuse + visibility * specular;
+    //color = vec3(texture(shadowMapTex, ShadowCoord.xy));
+    //color = vec3(ShadowCoord.z);
+    //clor = ShadowCoord.xyz;
+>>>>>>> sherry
 }

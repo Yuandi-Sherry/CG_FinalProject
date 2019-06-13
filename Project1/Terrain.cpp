@@ -8,6 +8,9 @@
 #include <fstream>
 #include "Camera.h"
 #include <vector>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 extern Camera camera;
 static GLuint textureNumber;
 const unsigned int N = 128;
@@ -25,28 +28,48 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
+<<<<<<< HEAD
 	// init Shader
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
 	//geneHeightMap();
 	cout << "heightMapTexture " << heightMapTexture << endl;
 	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+=======
+	translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	scale = glm::vec3(200.0f, 200.0f, 50.0f);
+
+	terrainShader.init("terrain.vs", "terrain.fs");
+	terrainShader.use();
+	//geneHeightMap();
+	// cout << "heightMapTexture " << heightMapTexture << endl;
+	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jpg");
+	cout << "heightMapTexture before set " << heightMapTexture << endl;
+>>>>>>> sherry
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
+	cout << "heightMapTexture after set " << heightMapTexture << endl;
 
 	/// Load material textures and bind them to textures 1 - 6.
 	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
+<<<<<<< HEAD
+=======
+	// cout << "sandTexture before set " << sandTexture << endl;
+>>>>>>> sherry
 	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
+	// cout << "sandTexture after set " << sandTexture << endl;
 
+	
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
 	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
-	
-	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
+
+	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/grass.jpg");
 	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
 
 	GLuint stoneTexture = utils::loadTexture((GLchar *)"./textures/stone_2.tga");
 	utils::setTexture(4, stoneTexture, terrainShader, "stoneTex");
 
+<<<<<<< HEAD
 	GLuint waterTexture = utils::loadTexture((GLchar *)"./textures/water.tga");
 	utils::setTexture(5, waterTexture, terrainShader, "waterTex");
 
@@ -57,6 +80,10 @@ void Terrain::init() {
 	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
 	
 	utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");
+=======
+	/*GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");*/
+>>>>>>> sherry
 
 	geneTriGrid();
 	
@@ -70,7 +97,7 @@ void Terrain::init() {
 	terrainShader.setVec3("light_dir_tmp", light_dir_tmp);
 	terrainShader.setVec3("Ia", Ia);
 	terrainShader.setVec3("Id", Id);
-	terrainShader.setVec3("Is", Is);
+	terrainShader.setVec3("Is", Is);                       
 
 	/// Define the material properties and pass them to the shaders.
 	glm::vec3 ka(0.65f, 0.7f, 0.65f);
@@ -90,15 +117,6 @@ void Terrain::init() {
 	glBindVertexArray(terrainVAO);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(0);
-	// terrainVAO = glGetAttribLocation(terrainShader.ID, "position");
-	// cout << terrainVAO <<" "  << terrainVBO <<  endl;
-	/// Set uniform IDs.
-	//_modelviewID = glGetUniformLocation(_programID, "modelview");
-	//_projectionID = glGetUniformLocation(_programID, "projection");
-
-	//_timeID = glGetUniformLocation(_programID, "time");
-
-	//_vertexAttribID = glGetAttribLocation(_programID, "position");
 }
 
 void Terrain::display() {
@@ -114,8 +132,9 @@ void Terrain::display() {
 	terrainShader.use();
 	/// Bind all the necessary textures.
 	for (int i = 0; i < utils::_nTextures; ++i) {
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, utils::_textureIDs[i]);
+		// cout << "_textureIDs[i] " << utils::_textureIDs[i] << endl;
 	}
 
 	/*
@@ -129,11 +148,12 @@ void Terrain::display() {
 	/// Vertex attribute "position" points to data from the currently binded array buffer.
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-	
+	glEnableVertexAttribArray(terrainVAO);
+	glVertexAttribPointer(terrainVAO, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	terrainShader.use();
 	/// Update the content of the uniforms.
-	terrainShader.setMat4("modelview", camera.GetViewMatrix());
+	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), scale));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
 	static float time = 0;
@@ -223,9 +243,19 @@ void Terrain::geneHeightMap() {
 	const int texWidth(1024);
 	const int texHeight(1024);
 
+	GLuint vertexArrayID;
+	glGenVertexArrays(1, &vertexArrayID);
+	glBindVertexArray(vertexArrayID);
 	heightMapShader.init("heightMap.vs", "heightMap.fs");
 	heightMapShader.use();
 
+<<<<<<< HEAD
+=======
+	GLuint frameBufferID;
+	glGenFramebuffers(1, &frameBufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+	//glViewport(0, 0, texWidth, texHeight);
+>>>>>>> sherry
 	// generate 2 1D texture
 	genePermutationTable();
 	geneGradientVectors();
@@ -265,16 +295,24 @@ void Terrain::geneHeightMap() {
 	// init VAO, bind position
 	glGenVertexArrays(1, &heightMapVAO);
 	glBindVertexArray(heightMapVAO);
+<<<<<<< HEAD
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(0);
+=======
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	
+>>>>>>> sherry
 	/// Render the 2 triangles (6 vertices).
 	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);
 
 	/// Clean up the now useless objects to free GPU memory.
+	//glDisableVertexAttribArray(heightMapVAO);
 	glDeleteBuffers(1, &heightMapVBO);
 	glDeleteTextures(1, &gradVectTexture);
 	glDeleteTextures(1, &permTableTexture);
+	glDeleteFramebuffers(1, &frameBufferID);
 	glDeleteProgram(heightMapShader.ID);
 	glDeleteVertexArrays(1, &heightMapVAO);
 }
@@ -341,4 +379,14 @@ void Terrain::geneGradientVectors() {
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, 8, 0, GL_RG, GL_FLOAT, gradients);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+}
+
+void Terrain::displayGUI() {
+	ImGui::InputFloat("terrain - transX", &translation.x);
+	ImGui::InputFloat("terrain - transY", &translation.y);
+	ImGui::InputFloat("terrain - transZ", &translation.z);
+
+	ImGui::InputFloat("terrain - scaleX", &scale.x);
+	ImGui::InputFloat("terrain - scaleY", &scale.y);
+	ImGui::InputFloat("terrain - scaleZ", &scale.z);
 }

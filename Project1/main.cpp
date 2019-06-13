@@ -43,14 +43,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 TreeGeneration treeGeneration;
-Camera camera(glm::vec3(0.0f,20.0f, 70.0f));
+Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
-	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, -20.0f, -50.0f)));
+	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
 	skybox.init();
 	water.init();
 	terrain.init();
@@ -59,7 +59,7 @@ int main() {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		processInput(window);
-		//displayGUI(window);
+		
 		//glfwMakeContextCurrent(window);
 		// treeGeneration.display();
 		// 
@@ -67,12 +67,20 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
+<<<<<<< HEAD
 		//water.display();
 		//skybox.display();
+=======
+		
+		water.display();
+		skybox.display();
+>>>>>>> sherry
 		treeGeneration.display();
 		terrain.display();
 
-		
+
+		displayGUI(window);
+		// GUI
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -95,7 +103,7 @@ GLFWwindow* initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	// ´´½¨´°¿Ú
-	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "CG_HOMEWORK2", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "FINAL_PROJECT", NULL, NULL);
 	if (window == NULL) {
 		glfwTerminate();
 		throw "fail to init window";
@@ -139,6 +147,8 @@ void processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, 0.1);
 	}
+
+
 }
 
 void initGUI(GLFWwindow* window) {
@@ -162,7 +172,13 @@ void displayGUI(GLFWwindow* window) {
 	{
 		ImGui::EndMenuBar();
 	}
-
+	// ----------------------------------------- modify there -----------------------------------------
+	///water.displayGUI();
+	camera.displayGUI();
+	// skybox.displayGUI();
+	// terrain.displayGUI();
+	treeGeneration.displayGUI();
+	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering
 	ImGui::Render();
@@ -170,8 +186,6 @@ void displayGUI(GLFWwindow* window) {
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &display_w, &display_h);
 	glViewport(-1, 1, display_w, display_h);
-	//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -180,7 +194,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

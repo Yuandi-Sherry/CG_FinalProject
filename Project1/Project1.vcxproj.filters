@@ -152,9 +152,6 @@
     <ClInclude Include="Skybox.h">
       <Filter>头文件\Assistance</Filter>
     </ClInclude>
-    <ClInclude Include="WaterSimulation.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>头文件\Water</Filter>
     </ClInclude>
@@ -166,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="rendering_context.h">
       <Filter>头文件\Assistance</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterSimulation.h">
+      <Filter>头文件\Water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

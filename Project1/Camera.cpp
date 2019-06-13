@@ -2,6 +2,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include <iostream>
 using namespace std;
 
@@ -16,7 +19,7 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
-	return  glm::perspective(glm::radians(Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+	return  glm::perspective(glm::radians(Zoom), (float)windowWidth / (float)windowHeight, 0.1f, farPanel);
 }
 
 glm::vec3 Camera::GetPosition() {
@@ -34,6 +37,24 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 		Position -= Right * velocity;
 	if (direction == RIGHT)
 		Position += Right * velocity;
+
+	/*xoffset *= MouseSensitivity;
+	yoffset *= MouseSensitivity;
+
+	Yaw += xoffset;
+	Pitch += yoffset;
+
+	// Make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (constrainPitch)
+	{
+		if (Pitch > 89.0f)
+			Pitch = 89.0f;
+		if (Pitch < -89.0f)
+			Pitch = -89.0f;
+	}
+
+	// Update Front, Right and Up Vectors using the updated Euler angles
+	updateCameraVectors();*/
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
@@ -80,3 +101,11 @@ void Camera::updateCameraVectors()
 	Up = glm::normalize(glm::cross(Right, Front));
 }
 
+void Camera::displayGUI() {
+	//ImGui::InputFloat("camera - positionX", &Position.x, -50, 50);
+	//ImGui::InputFloat("camera - positionY", &Position.y, -50, 50);
+	//ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
+
+//	ImGui::InputFloat("Zoom", &Zoom, 0, 90);
+	ImGui::InputFloat("far panel", &farPanel, 100, 1000);
+}

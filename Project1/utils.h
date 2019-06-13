@@ -35,6 +35,7 @@ public:
 			cout << "fail to load texture in " << path << endl;
 		}
 		stbi_image_free(image);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		return textureID;
 	}
 	/*
@@ -161,6 +162,7 @@ public:
 
 	static GLuint setTexture(const GLuint textureIndex, int textureID, Shader shader, std::string uniformName) {
 
+<<<<<<< HEAD
 		if (textureID < 0) {
 			cout << "[DEBUG]" <<  uniformName << " id < 0" << endl;
 			glGenTextures(1, (GLuint*)&textureID);
@@ -171,6 +173,17 @@ public:
 		cout << "[glActiveTexture] " << textureIndex << endl;
 
 		glBindTexture(GL_TEXTURE_2D, textureID);
+=======
+		//if (textureID < 0) {
+			//cout << "[DEBUG]" <<  uniformName << " id < 0" << endl;
+			//glGenTextures(1, (GLuint*)&textureID);
+		//}
+			
+		//glActiveTexture(GL_TEXTURE0 + textureIndex);
+		//cout << "[glActiveTexture] " << textureIndex << " ID: " << textureID <<  endl;
+
+//		glBindTexture(GL_TEXTURE_2D, textureID);
+>>>>>>> sherry
 
 		if (!uniformName.empty()) {
 			shader.setInt(uniformName.c_str(), textureIndex);

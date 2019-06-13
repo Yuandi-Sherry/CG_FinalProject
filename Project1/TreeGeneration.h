@@ -20,9 +20,12 @@ public:
 	~TreeGeneration();
 	void init(glm::mat4 position = glm::mat4(1.0f));
 	void display();
-	
+	void displayGUI();
+	int lastLevel;
+	int level;
 private:
 	void initVars();
+	void initLsys();
 	// position in global world
 	glm::mat4 position = glm::mat4(1.0f);
 	// leaf
@@ -46,10 +49,12 @@ private:
 	vector<int> branchIndices;
 	void generateCylinder();
 	void drawCylinder(glm::mat4 model = glm::mat4(1.0f));
+	void grow();
 	// Lsystem
 	LSystem LS;
 	// tree definiation
 	Tree tree;
-	
+	float trans[3] = { 0.0f, 0.0f, 0.0f };
+	float scale = 0.3f;
 };
 #endif // !TEST_BRANCH

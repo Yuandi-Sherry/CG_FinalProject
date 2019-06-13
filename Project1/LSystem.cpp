@@ -19,7 +19,9 @@ void LSystem::clearAll() {
 	leaves.clear();
 }
 
-void LSystem::initGrammar() { // load the grammar
+void LSystem::initGrammar(int level) { // load the grammar
+	// grammar.clear();
+	grammar.setLevel(level);
 	grammar.Iteration();
 }
 
@@ -136,5 +138,4 @@ void LSystem::init(Tree tree) {
 	radiusFactor = tree.trunk.radius_shrink;
 	leafRadius = tree.leaf.radius;
 	curState = {};
-	cout << "init LS - radius = " << radius << endl;
 }

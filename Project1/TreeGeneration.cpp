@@ -6,6 +6,13 @@
 #include <GLFW/glfw3.h>
 #include "Camera.h"
 #include "Terrain.h"
+<<<<<<< HEAD
+=======
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+>>>>>>> sherry
 
 GLint SLICEX = 20;
 extern double PI;
@@ -27,16 +34,24 @@ TreeGeneration::~TreeGeneration() {
 void TreeGeneration::init(glm::mat4 position) {
 	leafShader.init("textureShader.vs", "textureShader.fs");
 	branchShader.init("textureShader.vs", "textureShader.fs");
-	initVars();
+	
 	
 	// dealing with l system
-	LS.init(tree);
-	LS.initGrammar();
-	LS.generateFractal();
+	
 	generateCylinder();
+	initLsys();
+	initVars();
 	this->position = position;
 }
 
+
+void TreeGeneration::initLsys() {
+	// cout << "init sys" << endl;
+	// LS.clearAll();
+	LS.init(tree);
+	LS.initGrammar(level);
+	LS.generateFractal();
+}
 void TreeGeneration::drawCylinder(glm::mat4 model) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
@@ -46,11 +61,13 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+	//projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
-	branchShader.setMat4("projection", projection);
+	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
-	branchShader.setMat4("model", position * model);
+	branchShader.setMat4("model", 
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(branchVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
@@ -94,13 +111,13 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
-	glm::mat4 projection(1.0f);
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
-	leafShader.setMat4("projection", projection);
+	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
-	leafShader.setMat4("model", position * model);
+	leafShader.setMat4("model", 
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(leafVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -111,7 +128,9 @@ void TreeGeneration::initVars() {
 
 	// leafShader.setInt("texture2", 1);
 }
-
+/**
+  
+ */
 void TreeGeneration::initLeaf() {
 	leafTexture = utils::loadTextureCutout((GLchar*)"./Maple1.png");
 
@@ -150,16 +169,15 @@ void TreeGeneration::initLeaf() {
 	glEnableVertexAttribArray(2);
 
 	leafShader.use();
-	glUniform1i(glGetUniformLocation(leafShader.ID, "leafTexture"), 0);
+	leafShader.setInt("leafTexture", 0);
 }
 
 
 void TreeGeneration::initBranch() {
-	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
 	generateCylinder();
 	branchShader.use();
-	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
+	branchShader.setInt("myTexture", 0);
 
 }
 
@@ -267,4 +285,18 @@ void TreeGeneration::display() {
 	for (int i = 0; i < LS.leaves.size(); i++) {
 		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
 	}
+}
+
+void TreeGeneration::displayGUI() {
+	ImGui::SliderInt("tree size", &level, 0, 7);
+	ImGui::SliderFloat3("tree size", trans, 0, 100);
+	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
+	if (level != lastLevel) {
+		grow();
+		lastLevel = level;
+	}
+}
+
+void TreeGeneration::grow() {
+	initLsys();
 }
