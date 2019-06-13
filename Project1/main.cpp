@@ -59,7 +59,7 @@ int main() {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		processInput(window);
-		//displayGUI(window);
+		
 		//glfwMakeContextCurrent(window);
 		// treeGeneration.display();
 		// 
@@ -67,12 +67,16 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
+		
 		water.display();
 		skybox.display();
 		treeGeneration.display();
+
 		terrain.display();
 
-		
+
+		displayGUI(window);
+		// GUI
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -139,6 +143,8 @@ void processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, 0.1);
 	}
+
+
 }
 
 void initGUI(GLFWwindow* window) {
@@ -162,7 +168,10 @@ void displayGUI(GLFWwindow* window) {
 	{
 		ImGui::EndMenuBar();
 	}
-
+	// ----------------------------------------- modify there -----------------------------------------
+	water.displayGUI();
+	camera.displayGUI();
+	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering
 	ImGui::Render();
@@ -170,8 +179,6 @@ void displayGUI(GLFWwindow* window) {
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &display_w, &display_h);
 	glViewport(-1, 1, display_w, display_h);
-	//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 

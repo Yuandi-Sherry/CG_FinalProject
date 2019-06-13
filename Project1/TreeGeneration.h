@@ -20,7 +20,9 @@ public:
 	~TreeGeneration();
 	void init(glm::mat4 position = glm::mat4(1.0f));
 	void display();
-	
+	void displayGUI();
+	int lastLevel;
+	int level;
 private:
 	void initVars();
 	// position in global world

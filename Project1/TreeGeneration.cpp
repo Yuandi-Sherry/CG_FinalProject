@@ -7,6 +7,10 @@
 #include "Camera.h"
 #include "Terrain.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 GLint SLICEX = 20;
 extern double PI;
 extern int windowWidth;
@@ -94,11 +98,9 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
-	glm::mat4 projection(1.0f);
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
-	leafShader.setMat4("projection", projection);
+	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
 	leafShader.setMat4("model", position * model);
 	glBindVertexArray(leafVAO);
@@ -150,17 +152,15 @@ void TreeGeneration::initLeaf() {
 	glEnableVertexAttribArray(2);
 
 	leafShader.use();
-	glUniform1i(glGetUniformLocation(leafShader.ID, "leafTexture"), 0);
+	leafShader.setInt("leafTexture", 0);
 }
 
 
 void TreeGeneration::initBranch() {
-	// branchTexture = loadtga("./Sun.tga");
 	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
-	cout << "branch Tex" << branchTexture << endl;
 	generateCylinder();
 	branchShader.use();
-	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
+	branchShader.setInt("myTexture", 0);
 
 }
 
@@ -268,4 +268,8 @@ void TreeGeneration::display() {
 	for (int i = 0; i < LS.leaves.size(); i++) {
 		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
 	}
+}
+
+void TreeGeneration::displayGUI() {
+	ImGui::InputInt("tree size", &level, 1, 6);
 }
