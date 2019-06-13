@@ -150,9 +150,7 @@ void main() {
     ///<<<<<<<<<< TODO <<<<<<<<<<<
     float visibility = 1.0;
     //if(texture(shadowMapTex, ShadowCoord.xy).z  <  ShadowCoord.z) {
-    if(texture(shadowMapTex, ShadowCoord.xy).z < ShadowCoord.z - bias) {
-        visibility = 0.0;
-    }
+
 
 //    color =
 //     // Ambient : simulates indirect lighting

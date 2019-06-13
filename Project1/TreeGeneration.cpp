@@ -90,7 +90,7 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	}
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrain.heightMapTexture);
+	glBindTexture(GL_TEXTURE_2D, leafTexture);
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);

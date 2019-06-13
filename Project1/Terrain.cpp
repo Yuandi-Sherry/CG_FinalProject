@@ -64,18 +64,23 @@ void Terrain::init() {
 
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
-	geneHeightMap();
-	cout << "heightMapTexture " << heightMapTexture << endl;
-	//heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	//geneHeightMap();
+	// cout << "heightMapTexture " << heightMapTexture << endl;
+	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	cout << "heightMapTexture before set " << heightMapTexture << endl;
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
+	cout << "heightMapTexture after set " << heightMapTexture << endl;
 
 	/// Load material textures and bind them to textures 1 - 6.
 	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
-	utils::setTexture(1, -1, terrainShader, "sandTex");
+	// cout << "sandTexture before set " << sandTexture << endl;
+	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
+	// cout << "sandTexture after set " << sandTexture << endl;
 
+	
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
-	utils::setTexture(2, -1, terrainShader, "iceMoutainTex");
+	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
 
 	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
 	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
@@ -89,8 +94,8 @@ void Terrain::init() {
 	GLuint snowTexture = utils::loadTexture((GLchar *)"./textures/snow.tga");
 	utils::setTexture(6, snowTexture, terrainShader, "snowTex");
 
-	GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga");
-	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
+	/*GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");*/
 
 	geneTriGrid();
 	
@@ -104,7 +109,7 @@ void Terrain::init() {
 	terrainShader.setVec3("light_dir_tmp", light_dir_tmp);
 	terrainShader.setVec3("Ia", Ia);
 	terrainShader.setVec3("Id", Id);
-	terrainShader.setVec3("Is", Is);
+	terrainShader.setVec3("Is", Is);                       
 
 	/// Define the material properties and pass them to the shaders.
 	glm::vec3 ka(0.65f, 0.7f, 0.65f);
@@ -139,8 +144,9 @@ void Terrain::display() {
 	terrainShader.use();
 	/// Bind all the necessary textures.
 	for (int i = 0; i < utils::_nTextures; ++i) {
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, utils::_textureIDs[i]);
+		// cout << "_textureIDs[i] " << utils::_textureIDs[i] << endl;
 	}
 
 	/*
@@ -159,7 +165,7 @@ void Terrain::display() {
 
 	terrainShader.use();
 	/// Update the content of the uniforms.
-	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(20.0, 20.0, 1.0)));
+	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(20.0, 20.0, 10.0)));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
 	static float time = 0;
@@ -249,9 +255,16 @@ void Terrain::geneHeightMap() {
 	const int texWidth(1024);
 	const int texHeight(1024);
 
+	GLuint vertexArrayID;
+	glGenVertexArrays(1, &vertexArrayID);
+	glBindVertexArray(vertexArrayID);
 	heightMapShader.init("heightMap.vs", "heightMap.fs");
 	heightMapShader.use();
 
+	GLuint frameBufferID;
+	glGenFramebuffers(1, &frameBufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+	//glViewport(0, 0, texWidth, texHeight);
 	// generate 2 1D texture
 	genePermutationTable();
 	geneGradientVectors();
@@ -291,16 +304,19 @@ void Terrain::geneHeightMap() {
 	// init VAO, bind position
 	glGenVertexArrays(1, &heightMapVAO);
 	glBindVertexArray(heightMapVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+	
 	/// Render the 2 triangles (6 vertices).
 	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);
 
 	/// Clean up the now useless objects to free GPU memory.
+	//glDisableVertexAttribArray(heightMapVAO);
 	glDeleteBuffers(1, &heightMapVBO);
 	glDeleteTextures(1, &gradVectTexture);
 	glDeleteTextures(1, &permTableTexture);
+	glDeleteFramebuffers(1, &frameBufferID);
 	glDeleteProgram(heightMapShader.ID);
 	glDeleteVertexArrays(1, &heightMapVAO);
 }
