@@ -67,14 +67,9 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
-<<<<<<< HEAD
-		//water.display();
-		//skybox.display();
-=======
 		
 		water.display();
 		skybox.display();
->>>>>>> sherry
 		treeGeneration.display();
 		terrain.display();
 

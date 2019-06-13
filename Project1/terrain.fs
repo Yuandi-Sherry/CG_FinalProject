@@ -59,7 +59,7 @@ void main() {
 
     //current UV coordinate
     vec2 UV = vec2((displaced.xy +1.0)/2.0);
-	color = (displaced.z > 0.008) ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0) ; // 全部 > -0.01, <0.008
+	color = (displaced.z > 0.008) ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0) ; // 全锟斤拷 > -0.01, <0.008
 	//if it is water region, use normal from normal map 
 	//otherwise need to calculate it 
 	vec3 normal;
@@ -94,58 +94,6 @@ void main() {
 
     float slope = smoothstep(0.35, 0.65 , normal.z);
 
-<<<<<<< HEAD
-   
-
-
-	if(displaced.z < ground) { // bug: 一致都是这个为真
-		mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
-		
-		//color = mapped * 100;
-	} else if (displaced.z < sandMax) {
-		mapped = texture2D(sandTex, displaced.xy).rgb;
-		//color = vec3(0.0, 1.0, 0.0);
-	} else if (displaced.z < forestMin) {  //mix between sand, rock
-		vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-		vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
-		mapped = mix(stone, sand, slope);            
-	} else if (displaced.z  < forestMax) {  //mix between forest and rock
-		vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-		vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
-		mapped = mix(stone, forest, slope);
-	} else if (displaced.z < snowMin) { //mix between forest, rock and snow
-		vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-		vec3 ice = texture2D(iceMoutainTex, 10*displaced.xy).rgb;
-		vec3 forest = texture2D(treeTex, 20*displaced.xy).rgb;
-		if (slope > 0.5)
-			mapped = mix(stone, forest, slope);
-		else
-			mapped = mix(forest, ice, 2.0*(displaced.z-forestMax)/(snowMin-forestMax));
-	} else if (displaced.z < snowMax) {
-		vec3 snow = texture2D(snowTex, 60*displaced.xy).rgb;
-		vec3 iceMoutain = texture2D(iceMoutainTex, 20*displaced.xy).rgb;
-		mapped = mix(iceMoutain, snow, (displaced.z - snowMin)/(snowMax-snowMin));
-	} else {
-		mapped = texture2D(snowTex, 60*displaced.xy).rgb;
-	}
-
-
-		//Ambient color component
-	vec3 ambient = Ia * ka * mapped ;
-	// Assemble the colors.
-	//color =ambient + diffuse + specular;
-	vec3 light = vec3(0.8);
-
-	//Shadow / visibility
-	float bias = 0.005; 
-	float visibility = 1.0;
-	//if(texture(shadowMapTex, ShadowCoord.xy).z < ShadowCoord.z - bias) {
-		//visibility = 0.0;
-	//}
-	
-   
-
-=======
     if(displaced.z < ground) {
         mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
     } else if (displaced.z < sandMax) {
@@ -200,5 +148,4 @@ void main() {
     //color = vec3(texture(shadowMapTex, ShadowCoord.xy));
     //color = vec3(ShadowCoord.z);
     //clor = ShadowCoord.xyz;
->>>>>>> sherry
 }

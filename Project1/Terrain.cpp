@@ -28,14 +28,6 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
-<<<<<<< HEAD
-	// init Shader
-	terrainShader.init("terrain.vs", "terrain.fs");
-	terrainShader.use();
-	//geneHeightMap();
-	cout << "heightMapTexture " << heightMapTexture << endl;
-	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
-=======
 	translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	scale = glm::vec3(200.0f, 200.0f, 50.0f);
 
@@ -45,17 +37,13 @@ void Terrain::init() {
 	// cout << "heightMapTexture " << heightMapTexture << endl;
 	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jpg");
 	cout << "heightMapTexture before set " << heightMapTexture << endl;
->>>>>>> sherry
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
 	cout << "heightMapTexture after set " << heightMapTexture << endl;
 
 	/// Load material textures and bind them to textures 1 - 6.
 	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
-<<<<<<< HEAD
-=======
 	// cout << "sandTexture before set " << sandTexture << endl;
->>>>>>> sherry
 	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
 	// cout << "sandTexture after set " << sandTexture << endl;
 
@@ -69,21 +57,8 @@ void Terrain::init() {
 	GLuint stoneTexture = utils::loadTexture((GLchar *)"./textures/stone_2.tga");
 	utils::setTexture(4, stoneTexture, terrainShader, "stoneTex");
 
-<<<<<<< HEAD
-	GLuint waterTexture = utils::loadTexture((GLchar *)"./textures/water.tga");
-	utils::setTexture(5, waterTexture, terrainShader, "waterTex");
-
-	GLuint snowTexture = utils::loadTexture((GLchar *)"./textures/snow.tga");
-	utils::setTexture(6, snowTexture, terrainShader, "snowTex");
-
-	GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga");
-	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");
-	
-	utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");
-=======
 	/*GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
 	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");*/
->>>>>>> sherry
 
 	geneTriGrid();
 	
@@ -176,7 +151,7 @@ void Terrain::display() {
 	glm::mat4 lightMVP = lightProjection * view;
 
 	/* This can be fixed by tweaking the fetch coordinates directly in the fragment
-	 *  shader but it¡¯s more efficient to multiply the homogeneous coordinates by the
+	 *  shader but itï¿½ï¿½s more efficient to multiply the homogeneous coordinates by the
 	 * following matrix, which simply divides coordinates by 2 ( the diagonal : [-1,1]
 	 * -> [-0.5, 0.5] ) and translates them ( the lower row : [-0.5, 0.5] -> [0,1] ).
 	 */
@@ -249,13 +224,10 @@ void Terrain::geneHeightMap() {
 	heightMapShader.init("heightMap.vs", "heightMap.fs");
 	heightMapShader.use();
 
-<<<<<<< HEAD
-=======
 	GLuint frameBufferID;
 	glGenFramebuffers(1, &frameBufferID);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 	//glViewport(0, 0, texWidth, texHeight);
->>>>>>> sherry
 	// generate 2 1D texture
 	genePermutationTable();
 	geneGradientVectors();
@@ -295,14 +267,9 @@ void Terrain::geneHeightMap() {
 	// init VAO, bind position
 	glGenVertexArrays(1, &heightMapVAO);
 	glBindVertexArray(heightMapVAO);
-<<<<<<< HEAD
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(0);
-=======
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
 	
->>>>>>> sherry
 	/// Render the 2 triangles (6 vertices).
 	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / 3);

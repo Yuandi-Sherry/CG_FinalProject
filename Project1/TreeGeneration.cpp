@@ -6,13 +6,10 @@
 #include <GLFW/glfw3.h>
 #include "Camera.h"
 #include "Terrain.h"
-<<<<<<< HEAD
-=======
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
->>>>>>> sherry
 
 GLint SLICEX = 20;
 extern double PI;
@@ -107,7 +104,7 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	}
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrain.heightMapTexture);
+	glBindTexture(GL_TEXTURE_2D, leafTexture);
 	leafShader.use();
 	// set transformation
 	glm::mat4 view(1.0f);
