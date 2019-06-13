@@ -48,11 +48,9 @@ void main() {
 
 	// Different levels of height for texture mapping
 	const float ground = 0.01f;
-    const float sandMax = 0.015f;
-    const float forestMin = 0.025f;
-    const float forestMax = 0.25f;
-    const float snowMin= 0.315f;
-    const float snowMax = 0.425;
+    const float sandMax = 0.02f;
+    const float forestMin = 0.035f;
+    const float forestMax = 0.45f;
 
     float grid_size = 2.0/float(N);
     float tex_size = grid_size/2.0;
@@ -101,9 +99,9 @@ void main() {
     } else if (displaced.z < sandMax) {
         mapped = texture2D(sandTex, displaced.xy).rgb;
     } else if (displaced.z < forestMin) {  //mix between sand, rock
-        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-        vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
-        mapped = mix(stone, sand, slope);            
+        vec3 sand = texture2D(sandTex, 10*displaced.xy).rgb;
+        vec3 forest = texture2D(treeTex, 30*displaced.xy).rgb;
+        mapped = mix(sand, forest, slope);            
     } else {  //mix between forest and rock
         vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
         vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;

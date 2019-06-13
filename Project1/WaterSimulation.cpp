@@ -70,7 +70,8 @@ void WaterSimulation::display() {
 		firstRenderTime = glfwGetTime();
 	}
 
-	GLfloat dt = (GLfloat)glfwGetTime() - (GLfloat)firstRenderTime;
+	GLfloat dt = (GLfloat)glfwGetTime() - (GLfloat)firstRenderTime + 30;
+	// cout << "dt " << dt << endl;
 	waterShader.setFloat("dt", dt);
 
 	waterMesh->draw();

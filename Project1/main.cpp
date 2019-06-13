@@ -70,7 +70,7 @@ int main() {
 		
 		water.display();
 		skybox.display();
-		// treeGeneration.display();
+		treeGeneration.display();
 		terrain.display();
 
 
@@ -168,11 +168,11 @@ void displayGUI(GLFWwindow* window) {
 		ImGui::EndMenuBar();
 	}
 	// ----------------------------------------- modify there -----------------------------------------
-	water.displayGUI();
+	///water.displayGUI();
 	camera.displayGUI();
 	// skybox.displayGUI();
-	terrain.displayGUI();
-	// treeGeneration.displayGUI();
+	// terrain.displayGUI();
+	treeGeneration.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering
@@ -189,7 +189,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

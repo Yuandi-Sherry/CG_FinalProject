@@ -35,7 +35,7 @@ void Terrain::init() {
 	terrainShader.use();
 	//geneHeightMap();
 	// cout << "heightMapTexture " << heightMapTexture << endl;
-	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
+	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jpg");
 	cout << "heightMapTexture before set " << heightMapTexture << endl;
 	/// RenderingContext::init(terrain_vshader, terrain_fshader);
 	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
@@ -51,17 +51,11 @@ void Terrain::init() {
 	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
 	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
 
-	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/forest.tga");
+	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/grass.jpg");
 	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
 
 	GLuint stoneTexture = utils::loadTexture((GLchar *)"./textures/stone_2.tga");
 	utils::setTexture(4, stoneTexture, terrainShader, "stoneTex");
-
-	GLuint waterTexture = utils::loadTexture((GLchar *)"./textures/water.tga");
-	utils::setTexture(5, waterTexture, terrainShader, "waterTex");
-
-	GLuint snowTexture = utils::loadTexture((GLchar *)"./textures/snow.tga");
-	utils::setTexture(6, snowTexture, terrainShader, "snowTex");
 
 	/*GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
 	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");*/

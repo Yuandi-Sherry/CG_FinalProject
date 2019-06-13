@@ -23,7 +23,7 @@ private:
 
 	// model view control 
 
-	GLfloat translation[3] = { 0.0f, 2.0f, 0.0f };
+	GLfloat translation[3] = { 0.0f, 1.0f, 0.0f };
 	GLfloat scale[3] = { 2.0, 0.3, 2.0 };
 };
 

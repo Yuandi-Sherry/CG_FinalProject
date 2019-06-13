@@ -43,6 +43,8 @@ void TreeGeneration::init(glm::mat4 position) {
 
 
 void TreeGeneration::initLsys() {
+	// cout << "init sys" << endl;
+	// LS.clearAll();
 	LS.init(tree);
 	LS.initGrammar(level);
 	LS.generateFractal();
@@ -60,7 +62,9 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 
 	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
-	branchShader.setMat4("model", position * model);
+	branchShader.setMat4("model", 
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(branchVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
@@ -108,7 +112,9 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 
 	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
-	leafShader.setMat4("model", position * model);
+	leafShader.setMat4("model", 
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(leafVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -279,7 +285,9 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 3);
+	ImGui::SliderInt("tree size", &level, 0, 7);
+	ImGui::SliderFloat3("tree size", trans, 0, 100);
+	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
 	if (level != lastLevel) {
 		grow();
 		lastLevel = level;

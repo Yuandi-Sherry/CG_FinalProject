@@ -102,10 +102,10 @@ void Camera::updateCameraVectors()
 }
 
 void Camera::displayGUI() {
-	ImGui::InputFloat("camera - positionX", &Position.x, -50, 50);
-	ImGui::InputFloat("camera - positionY", &Position.y, -50, 50);
-	ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
+	//ImGui::InputFloat("camera - positionX", &Position.x, -50, 50);
+	//ImGui::InputFloat("camera - positionY", &Position.y, -50, 50);
+	//ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
 
-	ImGui::InputFloat("Zoom", &Zoom, 0, 90);
-	// ImGui::InputFloat("far panel", &farPanel, 100, 1000);
+//	ImGui::InputFloat("Zoom", &Zoom, 0, 90);
+	ImGui::InputFloat("far panel", &farPanel, 100, 1000);
 }

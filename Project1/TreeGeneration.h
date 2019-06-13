@@ -54,6 +54,7 @@ private:
 	LSystem LS;
 	// tree definiation
 	Tree tree;
-	
+	float trans[3] = { 0.0f, 0.0f, 0.0f };
+	float scale = 0.3f;
 };
 #endif // !TEST_BRANCH
