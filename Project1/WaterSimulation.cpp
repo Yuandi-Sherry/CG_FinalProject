@@ -51,7 +51,7 @@ void WaterSimulation::display() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.6f, 0.6f, 0.6f));
 	waterShader.setMat4("model",glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -30.0f)));
-	waterShader.setMat4("view", camera.GetViewMatrix());
+	waterShader.setMat4("view", camera.GetViewMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0.5)));
 	waterShader.setMat4("projection", camera.GetProjectionMatrix());
 	waterShader.setVec3("eyePos", camera.GetPosition());
 	waterShader.setVec3("lightPos", glm::vec3(0.0f, 1.0f, 0.0f));

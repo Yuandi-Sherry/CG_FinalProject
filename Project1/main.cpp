@@ -68,7 +68,7 @@ int main() {
 		lastTime = currentTime;
 		
 		water.display();
-		//skybox.display();
+		skybox.display();
 		treeGeneration.display();
 		terrain.display();
 

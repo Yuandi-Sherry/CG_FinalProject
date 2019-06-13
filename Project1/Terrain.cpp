@@ -165,7 +165,7 @@ void Terrain::display() {
 
 	terrainShader.use();
 	/// Update the content of the uniforms.
-	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(50.0, 50.0, 20.0)));
+	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -2.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(100.0, 100.0, 50.0)));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
 	static float time = 0;

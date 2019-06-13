@@ -46,9 +46,9 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 	glm::mat4 view(1.0f);
 	glm::mat4 projection(1.0f);
 	view = camera.GetViewMatrix();
-	projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+	//projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
 
-	branchShader.setMat4("projection", projection);
+	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
 	branchShader.setMat4("model", position * model);
 	glBindVertexArray(branchVAO);
