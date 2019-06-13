@@ -70,8 +70,7 @@ int main() {
 		
 		water.display();
 		skybox.display();
-		treeGeneration.display();
-
+		// treeGeneration.display();
 		terrain.display();
 
 
@@ -171,6 +170,9 @@ void displayGUI(GLFWwindow* window) {
 	// ----------------------------------------- modify there -----------------------------------------
 	water.displayGUI();
 	camera.displayGUI();
+	// skybox.displayGUI();
+	terrain.displayGUI();
+	// treeGeneration.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering

@@ -31,16 +31,22 @@ TreeGeneration::~TreeGeneration() {
 void TreeGeneration::init(glm::mat4 position) {
 	leafShader.init("textureShader.vs", "textureShader.fs");
 	branchShader.init("textureShader.vs", "textureShader.fs");
-	initVars();
+	
 	
 	// dealing with l system
-	LS.init(tree);
-	LS.initGrammar();
-	LS.generateFractal();
+	
 	generateCylinder();
+	initLsys();
+	initVars();
 	this->position = position;
 }
 
+
+void TreeGeneration::initLsys() {
+	LS.init(tree);
+	LS.initGrammar(level);
+	LS.generateFractal();
+}
 void TreeGeneration::drawCylinder(glm::mat4 model) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, branchTexture);
@@ -113,7 +119,9 @@ void TreeGeneration::initVars() {
 
 	// leafShader.setInt("texture2", 1);
 }
-
+/**
+  
+ */
 void TreeGeneration::initLeaf() {
 	leafTexture = utils::loadTextureCutout((GLchar*)"./Maple1.png");
 
@@ -271,5 +279,13 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::InputInt("tree size", &level, 1, 6);
+	ImGui::SliderInt("tree size", &level, 0, 3);
+	if (level != lastLevel) {
+		grow();
+		lastLevel = level;
+	}
+}
+
+void TreeGeneration::grow() {
+	initLsys();
 }

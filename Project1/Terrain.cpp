@@ -8,6 +8,9 @@
 #include <fstream>
 #include "Camera.h"
 #include <vector>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 extern Camera camera;
 static GLuint textureNumber;
 const unsigned int N = 128;
@@ -25,42 +28,8 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
-	// init Shader
-	/*terrainShader.init("terrain.vs", "terrain.fs");
-	terrainShader.use();
-	geneHeightMap();
-	cout << "heightMapTexture " << heightMapTexture << endl;
-	// heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
-	/// RenderingContext::init(terrain_vshader, terrain_fshader);
-	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
-
-	/// Load material textures and bind them to textures 1 - 6.
-	
-	
-	utils::setTexture(1, -1, terrainShader, "sandTex");
-	utils::loadTexture((GLchar *)"./textures/sand.tga"); // ´í->sand
-
-	utils::setTexture(2, -1, terrainShader, "iceMoutainTex");
-	utils::loadTexture((GLchar *)"./textures/dordona_range.tga"); // ´í->sand
-	//GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga"); // ´í->forest
-	//utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
-	
-	utils::loadTexture((GLchar *)"./textures/forest.tga");// ´í->stone
-	utils::setTexture(3, -1, terrainShader, "treeTex");
-
-	utils::loadTexture((GLchar *)"./textures/stone_2.tga");// ´í->waterTex
-	utils::setTexture(4, -1, terrainShader, "stoneTex");
-
-	utils::loadTexture((GLchar *)"./textures/water.tga"); // ´í->snow
-	utils::setTexture(5, -1, terrainShader, "waterTex");
-
-	utils::loadTexture((GLchar *)"./textures/snow.tga"); // ´í -> waterNormalMap
-	utils::setTexture(6, -1, terrainShader, "snowTex");
-
-	utils::loadTexture((GLchar *)"./textures/water_normal_map_2.tga"); // ¶Ô
-	utils::setTexture(7, -1, terrainShader, "waterNormalMap");
-	
-	//utils::setTexture(8, shadowTexture, terrainShader, "shadowMapTex");*/
+	translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	scale = glm::vec3(200.0f, 200.0f, 50.0f);
 
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
@@ -165,7 +134,7 @@ void Terrain::display() {
 
 	terrainShader.use();
 	/// Update the content of the uniforms.
-	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -2.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(100.0, 100.0, 50.0)));
+	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), scale));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
 
 	static float time = 0;
@@ -383,4 +352,14 @@ void Terrain::geneGradientVectors() {
 	glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, 8, 0, GL_RG, GL_FLOAT, gradients);
 	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+}
+
+void Terrain::displayGUI() {
+	ImGui::InputFloat("terrain - transX", &translation.x);
+	ImGui::InputFloat("terrain - transY", &translation.y);
+	ImGui::InputFloat("terrain - transZ", &translation.z);
+
+	ImGui::InputFloat("terrain - scaleX", &scale.x);
+	ImGui::InputFloat("terrain - scaleY", &scale.y);
+	ImGui::InputFloat("terrain - scaleZ", &scale.z);
 }

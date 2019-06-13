@@ -135,7 +135,6 @@
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="Terrain2.cpp" />
     <ClCompile Include="TreeGeneration.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="WaterSimulation.cpp" />
@@ -157,7 +156,6 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="Terrain2.h" />
     <ClInclude Include="TreeGeneration.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="utils.h" />

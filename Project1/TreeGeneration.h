@@ -25,6 +25,7 @@ public:
 	int level;
 private:
 	void initVars();
+	void initLsys();
 	// position in global world
 	glm::mat4 position = glm::mat4(1.0f);
 	// leaf
@@ -48,6 +49,7 @@ private:
 	vector<int> branchIndices;
 	void generateCylinder();
 	void drawCylinder(glm::mat4 model = glm::mat4(1.0f));
+	void grow();
 	// Lsystem
 	LSystem LS;
 	// tree definiation

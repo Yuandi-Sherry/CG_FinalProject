@@ -104,26 +104,11 @@ void main() {
         vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
         vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
         mapped = mix(stone, sand, slope);            
-    } else if (displaced.z  < forestMax) {  //mix between forest and rock
+    } else {  //mix between forest and rock
         vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
         vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
         mapped = mix(stone, forest, slope);
-    } else if (displaced.z < snowMin) { //mix between forest, rock and snow
-        vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
-        vec3 ice = texture2D(iceMoutainTex, 10*displaced.xy).rgb;
-        vec3 forest = texture2D(treeTex, 20*displaced.xy).rgb;
-        if (slope > 0.5)
-            mapped = mix(stone, forest, slope);
-        else
-            mapped = mix(forest, ice, 2.0*(displaced.z-forestMax)/(snowMin-forestMax));
-    } else if (displaced.z < snowMax) {
-        vec3 snow = texture2D(snowTex, 60*displaced.xy).rgb;
-        vec3 iceMoutain = texture2D(iceMoutainTex, 20*displaced.xy).rgb;
-        mapped = mix(iceMoutain, snow, (displaced.z - snowMin)/(snowMax-snowMin));
-    } else {
-        mapped = texture2D(snowTex, 60*displaced.xy).rgb;
-    }
-
+    } 
     //Ambient color component
     vec3 ambient = Ia * ka * mapped;
     // Assemble the colors.

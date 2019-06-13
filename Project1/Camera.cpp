@@ -19,7 +19,7 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
-	return  glm::perspective(glm::radians(Zoom), (float)windowWidth / (float)windowHeight, 0.1f, 200.0f);
+	return  glm::perspective(glm::radians(Zoom), (float)windowWidth / (float)windowHeight, 0.1f, farPanel);
 }
 
 glm::vec3 Camera::GetPosition() {
@@ -107,4 +107,5 @@ void Camera::displayGUI() {
 	ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
 
 	ImGui::InputFloat("Zoom", &Zoom, 0, 90);
+	// ImGui::InputFloat("far panel", &farPanel, 100, 1000);
 }
