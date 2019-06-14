@@ -56,7 +56,7 @@ int main() {
 	skybox.init();
 	water.init();
 	terrain.init();
-	text.init();
+	//text.init();
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -74,7 +74,7 @@ int main() {
 		skybox.display();
 		treeGeneration.display();
 		terrain.display();
-		text.display("00:00");
+		//text.display("00:00");
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
