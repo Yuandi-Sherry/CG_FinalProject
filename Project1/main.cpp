@@ -12,6 +12,7 @@
 #include "Skybox.h"
 #include "WaterSimulation.h"
 #include "Terrain.h"
+#include "text.h"
 #define N 888
 
 using namespace std;
@@ -47,6 +48,7 @@ Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
+Text text;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
@@ -54,6 +56,7 @@ int main() {
 	skybox.init();
 	water.init();
 	terrain.init();
+	text.init();
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -68,10 +71,10 @@ int main() {
 		lastTime = currentTime;
 		
 		water.display();
-		//skybox.display();
+		skybox.display();
 		treeGeneration.display();
 		terrain.display();
-
+		text.display("00:00");
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
