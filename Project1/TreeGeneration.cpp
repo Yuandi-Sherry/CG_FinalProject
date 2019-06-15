@@ -122,8 +122,6 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 void TreeGeneration::initVars() {
 	initLeaf();
 	initBranch();
-
-	// leafShader.setInt("texture2", 1);
 }
 /**
   
@@ -285,7 +283,7 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 7);
+	ImGui::SliderInt("tree size", &level, 0, 5);
 	ImGui::SliderFloat3("tree size", trans, 0, 100);
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
 	if (level != lastLevel) {
