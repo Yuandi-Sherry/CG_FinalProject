@@ -4,9 +4,12 @@
 
 Mesh::Mesh(const GLchar* inFile, GLboolean wireframe)
 {
+	// read file
 	std::ifstream objFile(inFile);
 	if (!objFile.good())
 		throw std::runtime_error("Cannot open OBJ file! The file does not exists or the application does not have access to it!");
+	
+	// 
 	std::vector<glm::vec3> v, vn;
 	std::vector<glm::vec2> vt;
 	std::vector<VertexFormat> vertices;

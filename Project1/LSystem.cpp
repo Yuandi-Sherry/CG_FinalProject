@@ -19,10 +19,18 @@ void LSystem::clearAll() {
 	leaves.clear();
 }
 
-void LSystem::initGrammar() { // load the grammar
+void LSystem::initGrammar(int level) { // load the grammar
+	// grammar.clear();
+	grammar.setLevel(1);
 	grammar.Iteration();
 }
 
+void LSystem::grow() { // load the grammar
+	// grammar.clear();
+	// grammar.setLevel(1);
+	grammar.Iteration();
+	generateFractal();
+}
 /*
  * calculate the branches of the tree in advance
  */
@@ -136,5 +144,4 @@ void LSystem::init(Tree tree) {
 	radiusFactor = tree.trunk.radius_shrink;
 	leafRadius = tree.leaf.radius;
 	curState = {};
-	cout << "init LS - radius = " << radius << endl;
 }

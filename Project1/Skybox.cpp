@@ -1,6 +1,12 @@
 #include "Skybox.h"
 #include "utils.h"
 #include "Camera.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 extern Camera camera;
 extern int windowWidth;
 extern int windowHeight;
@@ -41,9 +47,10 @@ void Skybox::display() {
 	skyboxShader.use();
 	glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));//!!!!这里使得天空不会放大缩小
 
+	glm::mat4 projection = glm::perspective(glm::radians((float)zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 	//skyboxShader.setMat4("model", model);
 	skyboxShader.setMat4("view" , view);
-	skyboxShader.setMat4("projection", camera.GetProjectionMatrix());
+	skyboxShader.setMat4("projection", projection);
 
 	glBindVertexArray(skyboxVAO);
 	glActiveTexture(GL_TEXTURE0);
@@ -51,4 +58,8 @@ void Skybox::display() {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
+}
+
+void Skybox::displayGUI() {
+	ImGui::InputInt("skybox zoom", &zoom, 45.0f, 1000.0f);
 }

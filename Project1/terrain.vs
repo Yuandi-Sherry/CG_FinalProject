@@ -1,9 +1,7 @@
 #version 330 core
-
-
 uniform mat4 projection;
 uniform mat4 modelview;
-uniform vec3 light_dir_tmp;
+uniform vec3 lightPosition;
 
 // Transformation matrix from camera view to light view.
 uniform mat4 lightOffsetMVP;
@@ -14,25 +12,18 @@ uniform sampler2D heightMapTex;
 // First input buffer. Defined here, retrieved in C++ by glGetAttribLocation.
 layout(location = 0) in vec2 position;
 
-
 //for animate the wave
 uniform float time;
-
 
 // Position (world coordinates) after heightmap displacement.
 // Add suffix for coordinate system.
 out vec3 displaced;
 //light direction
 out vec3 light_dir;
-
 //view direction
 out vec3 view_dir;
-
-
 // ShadowCoord is the position of the vertex as seen from the last camera (the light)
 out vec4 ShadowCoord;
-
-
 //
 out vec3 displaced_mv;
 
@@ -61,9 +52,9 @@ void main() {
     displaced_mv = vec3(gl_Position);
 
     //compute the light direction
-    light_dir = light_dir_tmp;
-    view_dir = vec3(position_mv);
 
+    view_dir = vec3(position_mv);
+	light_dir = normalize(lightPosition - view_dir);
 
     // ShadowCoord is the position of the vertex as seen from the last camera (the light)
     ShadowCoord = lightOffsetMVP * vec4(displaced,1);

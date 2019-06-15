@@ -8,6 +8,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include "Light.h"
 #include "TreeGeneration.h"
 #include "Skybox.h"
 #include "WaterSimulation.h"
@@ -49,6 +50,7 @@ Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
 Text text;
+Light light;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
@@ -59,16 +61,17 @@ int main() {
 	text.init(windowWidth, windowHeight);
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.5f, 0.6f, 0.7f, 1.0f);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		processInput(window);
-		//displayGUI(window);
+		
 		//glfwMakeContextCurrent(window);
 		// treeGeneration.display();
 		// 
 		GLdouble currentTime = glfwGetTime();
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
+		
 		
 		water.display();
 		skybox.display();
@@ -79,6 +82,10 @@ int main() {
 		string tmpstr = to_string(t);		
 		text.display(tmpstr);
 		
+
+
+		displayGUI(window);
+		// GUI
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -130,9 +137,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void processInput(GLFWwindow * window) {
+	
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+	// change camera position
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		camera.ProcessKeyboard(FORWARD, 0.1);
 	}
@@ -145,6 +154,21 @@ void processInput(GLFWwindow * window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, 0.1);
 	}
+	// change camera view
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		camera.ProcessKeyboard(UP, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		camera.ProcessKeyboard(DOWN, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		camera.ProcessKeyboard(KEY_LEFT , 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		camera.ProcessKeyboard(KEY_RIGHT, 0.1);
+	}
+
+
 }
 
 void initGUI(GLFWwindow* window) {
@@ -168,7 +192,14 @@ void displayGUI(GLFWwindow* window) {
 	{
 		ImGui::EndMenuBar();
 	}
-
+	// ----------------------------------------- modify there -----------------------------------------
+	///water.displayGUI();
+	camera.displayGUI();
+	// skybox.displayGUI();
+	// terrain.displayGUI();
+	treeGeneration.displayGUI();
+	light.displayGUI();
+	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering
 	ImGui::Render();
@@ -176,8 +207,6 @@ void displayGUI(GLFWwindow* window) {
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &display_w, &display_h);
 	glViewport(-1, 1, display_w, display_h);
-	//glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -186,7 +215,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

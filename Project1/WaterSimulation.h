@@ -10,6 +10,8 @@ public:
 	~WaterSimulation();
 	void init();
 	void display();
+	void displayGUI();
+
 private:
 	Shader waterShader;
 	Mesh* waterMesh;
@@ -18,6 +20,11 @@ private:
 	void sendWaves();
 	bool firstRender;
 	GLfloat firstRenderTime;
+
+	// model view control 
+
+	GLfloat translation[3] = { 0.0f, 1.0f, 0.0f };
+	GLfloat scale[3] = { 2.0f, 0.3f, 2.0f };
 };
 
 

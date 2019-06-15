@@ -1,7 +1,13 @@
 #include "WaterSimulation.h"
 #include "Camera.h"
 #include "Wave.h"
+#include "Light.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "utils.h"
 extern Camera camera;
+extern Light light;
 WaterSimulation::WaterSimulation()
 {
 }
@@ -20,7 +26,7 @@ void WaterSimulation::init() {
 
 	waterShader.use();
 	waterShader.setVec3("gridColor", color);
-	waterShader.setVec3("lightColor", glm::vec4(1.f));
+	
 	waterShader.setFloat("E", glm::e<GLfloat>());
 	waterShader.setFloat("damp", 0.1f);
 	waterShader.setFloat("Q", 1.0f);
@@ -50,11 +56,17 @@ void WaterSimulation::display() {
 	waterShader.use();
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.6f, 0.6f, 0.6f));
-	waterShader.setMat4("model",glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -30.0f)));
+	// waterShader.setMat4("model",glm::translate(glm::mat4(1.0f), glm::vec3()));
+
+	waterShader.setMat4("model",
+		glm::translate(glm::mat4(1.0f), glm::vec3(translation[0], translation[1], translation[2]))*
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale[0], scale[1], scale[2])));
 	waterShader.setMat4("view", camera.GetViewMatrix());
+	// waterShader.setMat4("view", camera.GetViewMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(0.8, 0.8, 0.8)));
 	waterShader.setMat4("projection", camera.GetProjectionMatrix());
+	waterShader.setVec3("lightColor", utils::arrayToVec3(light.getLightColor()));
 	waterShader.setVec3("eyePos", camera.GetPosition());
-	waterShader.setVec3("lightPos", glm::vec3(0.0f, 1.0f, 0.0f));
+	waterShader.setVec3("lightPos", utils::arrayToVec3(light.getLightPos()));
 	waterShader.setFloat("blinn", 1);
 	
 	if (firstRender) {
@@ -62,7 +74,8 @@ void WaterSimulation::display() {
 		firstRenderTime = glfwGetTime();
 	}
 
-	GLfloat dt = (GLfloat)glfwGetTime() - (GLfloat)firstRenderTime;
+	GLfloat dt = (GLfloat)glfwGetTime() - (GLfloat)firstRenderTime + 30;
+	// cout << "dt " << dt << endl;
 	waterShader.setFloat("dt", dt);
 
 	waterMesh->draw();
@@ -87,5 +100,16 @@ void WaterSimulation::sendWaves() {
 	waterShader.setVec2("w3.D", w3.D);
 	waterShader.setFloat("w3.w", w3.w);
 	waterShader.setFloat("w3.phi", w3.phi);
+
+}
+
+void WaterSimulation::displayGUI() {
+	ImGui::InputFloat("water - transX", &translation[0], -50, 50);
+	ImGui::InputFloat("water - transY", &translation[1], -50, 50);
+	ImGui::InputFloat("water - transZ", &translation[2], -50, 50);
+
+	ImGui::InputFloat("water - scaleX", &scale[0], -50, 50);
+	ImGui::InputFloat("water - scaleY", &scale[1], -50, 50);
+	ImGui::InputFloat("water - scaleZ", &scale[2], -50, 50);
 
 }
