@@ -21,8 +21,8 @@ public:
 	void init(glm::mat4 position = glm::mat4(1.0f));
 	void display();
 	void displayGUI();
-	int lastLevel;
-	int level;
+	int lastLevel = 0;
+	int level = 0;
 private:
 	void initVars();
 	void initLsys();

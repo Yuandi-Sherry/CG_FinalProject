@@ -7,11 +7,13 @@
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include "Camera.h"
+#include "Light.h"
 #include <vector>
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 extern Camera camera;
+extern Light light;
 static GLuint textureNumber;
 const unsigned int N = 128;
 const unsigned int nVertices = N * N;
@@ -28,53 +30,42 @@ Terrain::~Terrain()
 }
 
 void Terrain::init() {
+	// parameter of model matrix
 	translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	scale = glm::vec3(200.0f, 200.0f, 50.0f);
-
+	
+	// init shader
 	terrainShader.init("terrain.vs", "terrain.fs");
 	terrainShader.use();
-	//geneHeightMap();
-	// cout << "heightMapTexture " << heightMapTexture << endl;
-	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jpg");
-	cout << "heightMapTexture before set " << heightMapTexture << endl;
-	/// RenderingContext::init(terrain_vshader, terrain_fshader);
-	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
-	cout << "heightMapTexture after set " << heightMapTexture << endl;
-
-	/// Load material textures and bind them to textures 1 - 6.
-	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
-	// cout << "sandTexture before set " << sandTexture << endl;
-	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
-	// cout << "sandTexture after set " << sandTexture << endl;
-
 	
-	GLuint iceTexture = utils::loadTexture((GLchar *)"./textures/dordona_range.tga");
-	utils::setTexture(2, iceTexture, terrainShader, "iceMoutainTex");
+	// load image from file for height map texture
+	heightMapTexture = utils::loadTexture((GLchar *)"./textures/height.jpg");
+	utils::setTexture(0, heightMapTexture, terrainShader, "heightMapTex");
+
+	// load material textures and bind them to textures 1 - 6.
+	GLuint sandTexture = utils::loadTexture((GLchar *)"./textures/sand.tga");
+	utils::setTexture(1, sandTexture, terrainShader, "sandTex");
 
 	GLuint treeTexture = utils::loadTexture((GLchar *)"./textures/grass.jpg");
-	utils::setTexture(3, treeTexture, terrainShader, "treeTex");
+	utils::setTexture(2, treeTexture, terrainShader, "treeTex");
 
 	GLuint stoneTexture = utils::loadTexture((GLchar *)"./textures/stone_2.tga");
-	utils::setTexture(4, stoneTexture, terrainShader, "stoneTex");
+	utils::setTexture(3, stoneTexture, terrainShader, "stoneTex");
 
-	/*GLuint waterNormalTexture = utils::loadTexture((GLchar *)"./textures/height.jfif");
-	utils::setTexture(7, waterNormalTexture, terrainShader, "waterNormalMap");*/
-
+	// generate the vertices and indices of triangle to construct the grid
 	geneTriGrid();
 	
-
-	/// light
+	// apply light
 	terrainShader.use();
-	glm::vec3 light_dir_tmp(1.0f, 0.5f, 1.0f);
 	glm::vec3 Ia(1.0f, 1.0f, 1.0f);
 	glm::vec3 Id(1.0f, 1.0f, 1.0f);
 	glm::vec3 Is(1.0f, 1.0f, 1.0f);
-	terrainShader.setVec3("light_dir_tmp", light_dir_tmp);
+	
 	terrainShader.setVec3("Ia", Ia);
 	terrainShader.setVec3("Id", Id);
 	terrainShader.setVec3("Is", Is);                       
 
-	/// Define the material properties and pass them to the shaders.
+	// material properties and pass them to the shaders.
 	glm::vec3 ka(0.65f, 0.7f, 0.65f);
 	glm::vec3 kd(0.25f, 0.15f, 0.25f);
 	glm::vec3 ks(0.35f, 0.25f, 0.35f);
@@ -95,44 +86,24 @@ void Terrain::init() {
 }
 
 void Terrain::display() {
-
-	/// Set the context FBO as the rendering target.
-	//glBindFramebuffer(GL_FRAMEBUFFER, _heightMapVBO);
-
-	/// Specify the transformation from normalized device coordinates
-	/// to texture/window coordinates.
-	//glViewport(0, 0, _width, _height);
-
-	/// Select the shader program.
 	terrainShader.use();
-	/// Bind all the necessary textures.
+	// change light
+	terrainShader.setVec3("lightPosition", utils::arrayToVec3(light.getLightPos()));
+	terrainShader.setVec3("lightColor", utils::arrayToVec3(light.getLightColor()));
+	// show all textures
 	for (int i = 0; i < utils::_nTextures; ++i) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, utils::_textureIDs[i]);
-		// cout << "_textureIDs[i] " << utils::_textureIDs[i] << endl;
 	}
 
-	/*
-	 * Bind vertex array
-	 * A vertex array object holds references to the vertex buffers, the index
-	 * buffer and the layout specification of the vertex itself. At runtime,
-	 * you can just glBindVertexArray to recall all of these information.
-	 */
 	glBindVertexArray(terrainVAO);
-
-	/// Vertex attribute "position" points to data from the currently binded array buffer.
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
 	glEnableVertexAttribArray(terrainVAO);
 	glVertexAttribPointer(terrainVAO, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	terrainShader.use();
-	/// Update the content of the uniforms.
+	// set model / view / projection
 	terrainShader.setMat4("modelview", camera.GetViewMatrix() * glm::translate(glm::mat4(1.0f), translation) * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), scale));
 	terrainShader.setMat4("projection", camera.GetProjectionMatrix());
-
-	static float time = 0;
-	terrainShader.setFloat("time", time);
 
 	/// Spot light projection.
 	float fieldOfView = 45.0f;
@@ -170,8 +141,6 @@ void Terrain::display() {
 
 	/// Render the terrain from camera point of view to default framebuffer.
 	glDrawElements(GL_TRIANGLES, nIndices, GL_UNSIGNED_INT, 0);
-
-
 	glDisableVertexAttribArray(terrainVAO);
 }
 
@@ -184,8 +153,6 @@ void Terrain::geneTriGrid() {
 			vertices[y*N + x] = glm::vec2(float(2.0*x) / (N - 1) - 1, float(2.0*y) / (N - 1) - 1);
 		}
 	}
-	// cout << sizeof(vertices) << " = " << nVertices * sizeof(glm::vec2) << endl;
-
 	// init VBO
 	glGenBuffers(1, &terrainVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);

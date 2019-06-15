@@ -21,10 +21,16 @@ void LSystem::clearAll() {
 
 void LSystem::initGrammar(int level) { // load the grammar
 	// grammar.clear();
-	grammar.setLevel(level);
+	grammar.setLevel(1);
 	grammar.Iteration();
 }
 
+void LSystem::grow() { // load the grammar
+	// grammar.clear();
+	// grammar.setLevel(1);
+	grammar.Iteration();
+	generateFractal();
+}
 /*
  * calculate the branches of the tree in advance
  */

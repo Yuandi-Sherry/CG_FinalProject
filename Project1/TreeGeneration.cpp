@@ -38,7 +38,6 @@ void TreeGeneration::init(glm::mat4 position) {
 	generateCylinder();
 	initLsys();
 	initVars();
-	this->position = position;
 }
 
 
@@ -384,15 +383,17 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 5);
+	ImGui::SliderInt("tree size", &level, 0, 4);
 	ImGui::SliderFloat3("tree size", trans, 0, 100);
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
-	if (level != lastLevel) {
-		grow();
+	if (level > lastLevel) {
+		cout << "level change" << endl;
+		LS.grow();
 		lastLevel = level;
 	}
 }
 
 void TreeGeneration::grow() {
 	initLsys();
+
 }

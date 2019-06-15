@@ -8,6 +8,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include "Light.h"
 #include "TreeGeneration.h"
 #include "Skybox.h"
 #include "WaterSimulation.h"
@@ -47,6 +48,7 @@ Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
+Light light;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
@@ -127,9 +129,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void processInput(GLFWwindow * window) {
+	
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+	// change camera position
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		camera.ProcessKeyboard(FORWARD, 0.1);
 	}
@@ -141,6 +145,19 @@ void processInput(GLFWwindow * window) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, 0.1);
+	}
+	// change camera view
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		camera.ProcessKeyboard(UP, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		camera.ProcessKeyboard(DOWN, 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		camera.ProcessKeyboard(KEY_LEFT , 0.1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		camera.ProcessKeyboard(KEY_RIGHT, 0.1);
 	}
 
 
@@ -173,6 +190,7 @@ void displayGUI(GLFWwindow* window) {
 	// skybox.displayGUI();
 	// terrain.displayGUI();
 	treeGeneration.displayGUI();
+	light.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering
@@ -189,7 +207,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

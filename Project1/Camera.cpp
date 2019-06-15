@@ -37,24 +37,21 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 		Position -= Right * velocity;
 	if (direction == RIGHT)
 		Position += Right * velocity;
+	if (direction == UP)
+		Pitch += velocity;
+	if (direction == DOWN)
+		Pitch -= velocity;
+	if (direction == KEY_LEFT)
+		Yaw += velocity;
+	if (direction == KEY_RIGHT)
+		Yaw -= velocity;
 
-	/*xoffset *= MouseSensitivity;
-	yoffset *= MouseSensitivity;
 
-	Yaw += xoffset;
-	Pitch += yoffset;
-
-	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (constrainPitch)
-	{
-		if (Pitch > 89.0f)
-			Pitch = 89.0f;
-		if (Pitch < -89.0f)
-			Pitch = -89.0f;
-	}
-
-	// Update Front, Right and Up Vectors using the updated Euler angles
-	updateCameraVectors();*/
+	if (Pitch > 89.0f)
+		Pitch = 89.0f;
+	if (Pitch < -89.0f)
+		Pitch = -89.0f;
+	updateCameraVectors();
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
@@ -64,7 +61,6 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 
 	Yaw += xoffset;
 	Pitch += yoffset;
-
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (constrainPitch)
 	{

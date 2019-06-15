@@ -102,6 +102,9 @@
     <ClCompile Include="rendering_context.cpp">
       <Filter>源文件\Assistance</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imconfig.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="WaterSimulation.h">
       <Filter>头文件\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

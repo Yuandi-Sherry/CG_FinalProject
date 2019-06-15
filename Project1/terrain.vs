@@ -1,7 +1,7 @@
 #version 330 core
 uniform mat4 projection;
 uniform mat4 modelview;
-uniform vec3 light_dir_tmp;
+uniform vec3 lightPosition;
 
 // Transformation matrix from camera view to light view.
 uniform mat4 lightOffsetMVP;
@@ -52,9 +52,9 @@ void main() {
     displaced_mv = vec3(gl_Position);
 
     //compute the light direction
-    light_dir = light_dir_tmp;
-    view_dir = vec3(position_mv);
 
+    view_dir = vec3(position_mv);
+	light_dir = normalize(lightPosition - view_dir);
 
     // ShadowCoord is the position of the vertex as seen from the last camera (the light)
     ShadowCoord = lightOffsetMVP * vec4(displaced,1);
