@@ -46,5 +46,6 @@ public:
 	void clearAll();
 	void initGrammar(int level);
 	void generateFractal();
+	void grow();
 };
 #endif // !_L_SYSTEM_

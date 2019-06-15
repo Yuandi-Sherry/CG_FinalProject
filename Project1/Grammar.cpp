@@ -12,8 +12,11 @@ void Grammar::clear()
  * clear grammar string
  */
 void Grammar::Iteration() {
+	if (rule == "") {
+		rule = grammar;
+	}
+	string temprule = rule;
 	rule = "";
-	string temprule = grammar;
 	for (int i = 1; i <= level; i++) {
 		// for each level
 		int curlen = temprule.length();
@@ -58,3 +61,4 @@ string Grammar::getRule()
 {
 	return rule;
 }
+

@@ -1,10 +1,13 @@
 #include "WaterSimulation.h"
 #include "Camera.h"
 #include "Wave.h"
+#include "Light.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "utils.h"
 extern Camera camera;
+extern Light light;
 WaterSimulation::WaterSimulation()
 {
 }
@@ -23,7 +26,7 @@ void WaterSimulation::init() {
 
 	waterShader.use();
 	waterShader.setVec3("gridColor", color);
-	waterShader.setVec3("lightColor", glm::vec4(1.f));
+	
 	waterShader.setFloat("E", glm::e<GLfloat>());
 	waterShader.setFloat("damp", 0.1f);
 	waterShader.setFloat("Q", 1.0f);
@@ -61,8 +64,9 @@ void WaterSimulation::display() {
 	waterShader.setMat4("view", camera.GetViewMatrix());
 	// waterShader.setMat4("view", camera.GetViewMatrix() * glm::scale(glm::mat4(1.0f), glm::vec3(0.8, 0.8, 0.8)));
 	waterShader.setMat4("projection", camera.GetProjectionMatrix());
+	waterShader.setVec3("lightColor", utils::arrayToVec3(light.getLightColor()));
 	waterShader.setVec3("eyePos", camera.GetPosition());
-	waterShader.setVec3("lightPos", glm::vec3(0.0f, 1.0f, 0.0f));
+	waterShader.setVec3("lightPos", utils::arrayToVec3(light.getLightPos()));
 	waterShader.setFloat("blinn", 1);
 	
 	if (firstRender) {

@@ -8,6 +8,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include "Light.h"
 #include "TreeGeneration.h"
 #include "Skybox.h"
 #include "WaterSimulation.h"
@@ -47,6 +48,7 @@ Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
 Terrain terrain;
+Light light;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
@@ -188,6 +190,7 @@ void displayGUI(GLFWwindow* window) {
 	// skybox.displayGUI();
 	// terrain.displayGUI();
 	treeGeneration.displayGUI();
+	light.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
 	// Rendering

@@ -181,6 +181,18 @@ public:
 		return textureID;
 
 	}
+
+	static glm::vec3 arrayToVec3(float * input) {
+		glm::vec3 ans(input[0], input[1], input[2]);
+		return ans;
+	}
+
+	float* vec3ToArray(glm::vec3 input) {
+		float ans[3] = {
+			input.x, input.y, input.z
+		};
+		return ans;
+	}
 private:
 
 };
