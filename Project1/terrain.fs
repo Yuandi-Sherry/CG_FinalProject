@@ -44,10 +44,10 @@ layout(location = 0) out vec3 color;
 void main() {
 
 	// Different levels of height for texture mapping
-	const float ground = 0.01f;
-    const float sandMax = 0.1f;
-	const float grassMin = 0.15f;
-	const float grassMax = 0.3f;
+    const float sandMax = 0.02f;
+	const float stoneMin = 0.035f;
+	const float grassMin = 0.04f;
+	const float grassMax = 0.2f;
     const float forestMin = 0.35f;
 
     float grid_size = 2.0/float(N);
@@ -89,40 +89,26 @@ void main() {
 
     float slope = smoothstep(0.35, 0.65 , normal.z);
 
-    if(displaced.z < ground) {
-        // mapped = texture2D(waterTex, 5*vec2(displaced.x+ cos(time/5000.0),displaced.y+sin(time/5000.0))).rgb;
-    } else if (displaced.z < sandMax) {
-        mapped = texture2D(sandTex, 10*displaced.xy).rgb;
-		// color = vec3(1,0,0);
-    } else if (displaced.z < forestMin) {  //mix between sand, rock
-        vec3 sand = texture2D(sandTex, 10*displaced.xy).rgb;
-        vec3 forest = texture2D(treeTex, 30*displaced.xy).rgb;
-        mapped = mix(sand, forest, slope);          
+    if(displaced.z < stoneMin) {
+		vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
+        vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
+        mapped = mix(stone, sand, slope);    
+	} else if(displaced.z < grassMin) {  //mix between sand, rock
+        vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
+        vec3 sand = texture2D(sandTex, 30*displaced.xy).rgb;
+        mapped = mix(forest, sand, slope);          
 		// color = vec3(0,1,0);
     } else {  //mix between forest and rock
         vec3 stone = texture2D(stoneTex, 10*displaced.xy).rgb;
         vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
         mapped = mix(stone, forest, slope);
-		//mapped = texture2D(treeTex, 10*displaced.xy).rgb;
-		// color = vec3(0,0,1);
     } 
     //Ambient color component
     
     // Assemble the colors.
     color = (ambient + diffuse + specular)*mapped;
-
-
-
-
     vec3 light = vec3(0.8);
 
-    ///>>>>>>>>>> TODO >>>>>>>>>>>
-    /// TODO: Practical 6.
-    /// 1) Assign the texture color in tex at position UV to diffuse instead of the interpolated vertexcolor
-    ///<<<<<<<<<< TODO <<<<<<<<<<<
-//    vec3 diffuse = vcolor;
-
-    //Shadow / visibility
     float bias = 0.005;  // 0.001
     ///>>>>>>>>>> TODO >>>>>>>>>>>
     /// TODO: Practical 6.

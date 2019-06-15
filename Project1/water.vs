@@ -1,10 +1,10 @@
 #version 330 core
 struct Wave {
-	float A;
-	vec2 D;
-	vec2 C;
-	float w;
-	float phi;
+	float A; // Amplitude
+	vec2 D; // direction
+	vec2 C; // center of circular
+	float w; // wave length
+	float phi; // speed
 };
 
 layout (location = 0) in vec3 position;
@@ -16,7 +16,7 @@ out vec3 Normal;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float Q;
+uniform float Q; // steepness
 uniform float E;
 
 // Uniform Waves
