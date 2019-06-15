@@ -4,8 +4,6 @@
 
 #include <string>
 
-#include "OpenGLText.h"
-
 using namespace std;
 #ifndef _TEXT_
 #define _TEXT_
@@ -15,10 +13,9 @@ class Text
 public:
 	Text();
 	~Text();
-	void init(int windowWidth, int windowHeight);
-	void display(const char* str);
+	void init();
+	void display();
 
-	OpenGLText oglText;
 };
 
 

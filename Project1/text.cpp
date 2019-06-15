@@ -9,20 +9,10 @@ Text::~Text()
 	
 }
 
-void Text::init(int windowWidth, int windowHeight) {
-	//glewInit();
-	gladLoadGL();
+void Text::init() {
 
-	if (!oglText.init("Candy Script_48", windowWidth, windowHeight))
-		if (!oglText.init("./fonts/Candy Script_48", windowWidth, windowHeight))
-			exit(1);
 }
 
-void Text::display(const char* str) {	
+void Text::display() {	
 
-	oglText.beginString();
-
-	oglText.drawString(10, 800, str, 1, 0xFFFFFF70);
-
-	oglText.endString();
 }
