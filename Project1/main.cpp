@@ -74,7 +74,9 @@ int main() {
 		skybox.display();
 		treeGeneration.display();
 		terrain.display();
-		string tmpstr = "00:00";
+		
+		double t = glfwGetTime();
+		string tmpstr = to_string(t);		
 		text.display(tmpstr);
 		
 		glfwSwapBuffers(window);

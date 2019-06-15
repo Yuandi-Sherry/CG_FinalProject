@@ -14,12 +14,7 @@ void Text::init(int windowWidth, int windowHeight) {
 	// Define the viewport dimensions
 	width = windowWidth;
 	height = windowHeight;
-	glViewport(0, 0, width, height);
-
-	// Set OpenGL options
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glViewport(0, 0, width, height);	
 
 	// Compile and setup the shader
 	textShader.init("text.vs", "text.fs");
@@ -55,7 +50,7 @@ void Text::init(int windowWidth, int windowHeight) {
 		}
 		// Generate texture
 		GLuint texture;
-		glGenTextures(1, &texture);
+		glGenTextures(1, &texture);		
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(
 			GL_TEXTURE_2D,
@@ -101,10 +96,16 @@ void Text::init(int windowWidth, int windowHeight) {
 }
 
 void Text::display(string str) {	
-
+	// Set OpenGL options
+	//glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 	/*RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 	RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));*/
 	RenderText(textShader, "Current time: " + str, width / 2 - 100, height - 100, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+
+	glDisable(GL_BLEND);
 }
 
 void Text::RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
@@ -129,12 +130,12 @@ void Text::RenderText(Shader &shader, std::string text, GLfloat x, GLfloat y, GL
 		// Update VBO for each character
 		GLfloat vertices[6][4] = {
 			{ xpos,     ypos + h,   0.0, 0.0 },
-		{ xpos,     ypos,       0.0, 1.0 },
-		{ xpos + w, ypos,       1.0, 1.0 },
+			{ xpos,     ypos,       0.0, 1.0 },
+			{ xpos + w, ypos,       1.0, 1.0 },
 
-		{ xpos,     ypos + h,   0.0, 0.0 },
-		{ xpos + w, ypos,       1.0, 1.0 },
-		{ xpos + w, ypos + h,   1.0, 0.0 }
+			{ xpos,     ypos + h,   0.0, 0.0 },
+			{ xpos + w, ypos,       1.0, 1.0 },
+			{ xpos + w, ypos + h,   1.0, 0.0 }
 		};
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);

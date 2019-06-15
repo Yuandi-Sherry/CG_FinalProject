@@ -19,6 +19,7 @@
 #include FT_FREETYPE_H
 // GL includes
 #include "Shader.h"
+#include "utils.h"
 
 using namespace std;
 
