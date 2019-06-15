@@ -52,10 +52,10 @@ Text text;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
-	//treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
-	//skybox.init();
-	//water.init();
-	//terrain.init();
+	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
+	skybox.init();
+	water.init();
+	terrain.init();
 	text.init(windowWidth, windowHeight);
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
@@ -70,11 +70,12 @@ int main() {
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
 		
-		//water.display();
-		//skybox.display();
-		//treeGeneration.display();
-		//terrain.display();
-		text.display("00:00");
+		water.display();
+		skybox.display();
+		treeGeneration.display();
+		terrain.display();
+		string tmpstr = "00:00";
+		text.display(tmpstr);
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
