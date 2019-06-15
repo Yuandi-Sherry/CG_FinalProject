@@ -36,6 +36,7 @@ private:
 	Shader leafShader;
 	void initLeaf();
 	void drawLeaf(glm::vec4 start, glm::vec4 end, double radius);
+	void drawFlipLeaf(glm::vec4 start, glm::vec4 end, double radius);
 	// branch
 	GLuint branchVAO = 0;
 	GLuint branchVBO = 0;
@@ -44,11 +45,13 @@ private:
 	void initBranch();
 	Shader branchShader;
 	void drawBranch(glm::vec4 start, glm::vec4 end, double radius);
+	void drawFlipBranch(glm::vec4 start, glm::vec4 end, double radius);
 	// cylinder for branch
 	vector<float> branchVertices;
 	vector<int> branchIndices;
 	void generateCylinder();
 	void drawCylinder(glm::mat4 model = glm::mat4(1.0f));
+	void drawFlipCylinder(glm::mat4 model);
 	void grow();
 	// Lsystem
 	LSystem LS;
