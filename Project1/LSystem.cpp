@@ -19,7 +19,7 @@ void LSystem::clearAll() {
 	leaves.clear();
 }
 
-void LSystem::initGrammar(int level) { // load the grammar
+void LSystem::initGrammar() { // load the grammar
 	// grammar.clear();
 	grammar.setLevel(1);
 	grammar.Iteration();

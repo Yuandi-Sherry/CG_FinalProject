@@ -20,7 +20,7 @@ extern float lastY;
 extern Camera camera;
 extern Terrain terrain;
 TreeGeneration::TreeGeneration() {
-	
+
 }
 TreeGeneration::~TreeGeneration() {
 	glDeleteVertexArrays(1, &leafVAO);
@@ -31,14 +31,13 @@ TreeGeneration::~TreeGeneration() {
 void TreeGeneration::init(glm::mat4 position) {
 	leafShader.init("textureShader.vs", "textureShader.fs");
 	branchShader.init("textureShader.vs", "textureShader.fs");
-	
-	
+
+
 	// dealing with l system
-	
+
 	generateCylinder();
 	initLsys();
 	initVars();
-	this->position = position;
 }
 
 
@@ -46,7 +45,7 @@ void TreeGeneration::initLsys() {
 	// cout << "init sys" << endl;
 	// LS.clearAll();
 	LS.init(tree);
-	LS.initGrammar(level);
+	LS.initGrammar();
 	LS.generateFractal();
 }
 void TreeGeneration::drawCylinder(glm::mat4 model) {
@@ -62,7 +61,7 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 
 	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
-	branchShader.setMat4("model", 
+	branchShader.setMat4("model",
 		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(branchVAO);
@@ -70,7 +69,32 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 	glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
 	//glUniform1i(glGetUniformLocation(shaderProgram, "solarTexture"), 0);
 }
+
+void TreeGeneration::drawFlipCylinder(glm::mat4 model) {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, branchTexture);
+	glUniform1i(glGetUniformLocation(branchShader.ID, "myTexture"), 0);
+	branchShader.use();
+	// set transformation
+	glm::mat4 view(1.0f);
+	glm::mat4 projection(1.0f);
+	view = camera.GetViewMatrix();
+	//projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 1000.0f);
+
+	branchShader.setMat4("projection", camera.GetProjectionMatrix());
+	branchShader.setMat4("view", view);
+	branchShader.setMat4("model",
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], -trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
+	glBindVertexArray(branchVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
+	glDrawElements(GL_TRIANGLES, (GLsizei)(branchIndices.size()), GL_UNSIGNED_INT, 0);
+	//glUniform1i(glGetUniformLocation(shaderProgram, "solarTexture"), 0);
+}
+
 void TreeGeneration::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
+
+	// cout << start.x << " " << start.y << " " << start.z << endl;
 	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
 	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
 	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, start.y, start.z));
@@ -82,27 +106,55 @@ void TreeGeneration::drawBranch(glm::vec4 start, glm::vec4 end, double radius) {
 		glm::vec3 normal = glm::cross(assVec, delta);
 		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
 		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
-		glm::mat4 model = rotation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius));
+		glm::mat4 model = rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius));
 		drawCylinder(translation* model);
 	}
+}
+
+void TreeGeneration::drawFlipBranch(glm::vec4 start, glm::vec4 end, double radius) {
+	glFrontFace(GL_CW); // attention!!
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendColor(0, 0, 0, 0.2f);
+	glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+
+	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
+	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
+	if (delta.x == 0 && delta.z == 0) {
+		glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, end.y, start.z));
+		drawFlipCylinder(translation* glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius)));
+	}
+	else {
+		glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x, start.y, start.z));
+		glm::vec3 assVec = glm::vec3(0, distance, 0);
+		glm::vec3 normal = glm::cross(assVec, delta);
+		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
+		glm::mat4 model = rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)distance, radius));
+		drawFlipCylinder(translation* model);
+	}
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glFrontFace(GL_CCW);
 }
 
 void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
 	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
-	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x + radius/3, start.y+radius/3, start.z));
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x + radius / 3, start.y + radius / 3, start.z));
 	glm::mat4 model(1.0f);
 	if (delta.x == 0 && delta.z == 0) {
-		model = translation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)radius,1));
+		model = translation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)radius, 1));
 	}
 	else {
 		glm::vec3 assVec = glm::vec3(0, distance, 0);
 		glm::vec3 normal = glm::cross(assVec, delta);
 		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
 		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
-		model = translation *  rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, 1));
+		model = translation * rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, 1));
 	}
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, leafTexture);
 	leafShader.use();
@@ -112,21 +164,61 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 
 	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
-	leafShader.setMat4("model", 
+	leafShader.setMat4("model",
 		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(leafVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
+void TreeGeneration::drawFlipLeaf(glm::vec4 start, glm::vec4 end, double radius) {
+	glFrontFace(GL_CW); // attention!!
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendColor(0, 0, 0, 0.2f);
+	glBlendFunc(GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
+
+	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
+	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x + radius / 3, start.y + radius / 3, start.z));
+	glm::mat4 model(1.0f);
+	if (delta.x == 0 && delta.z == 0) {
+		model = translation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, (GLfloat)radius, 1));
+	}
+	else {
+		glm::vec3 assVec = glm::vec3(0, distance, 0);
+		glm::vec3 normal = glm::cross(assVec, delta);
+		GLfloat angle = acos(glm::dot(assVec, delta) / distance / distance);
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, normal);
+		model = translation * rotation * glm::scale(glm::mat4(1.0f), glm::vec3(radius, radius, 1));
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, leafTexture);
+	leafShader.use();
+	// set transformation
+	glm::mat4 view(1.0f);
+	view = camera.GetViewMatrix();
+
+	leafShader.setMat4("projection", camera.GetProjectionMatrix());
+	leafShader.setMat4("view", view);
+	leafShader.setMat4("model",
+		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], -trans[1], trans[2])) *
+		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
+	glBindVertexArray(leafVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glFrontFace(GL_CCW);
+}
+
 void TreeGeneration::initVars() {
 	initLeaf();
 	initBranch();
-
-	// leafShader.setInt("texture2", 1);
 }
 /**
-  
+
  */
 void TreeGeneration::initLeaf() {
 	leafTexture = utils::loadTextureCutout((GLchar*)"./Maple1.png");
@@ -188,7 +280,7 @@ void TreeGeneration::generateCylinder() {
 	float phi = stripe;
 	for (float phi = 0; phi <= 1; phi += 1) {
 		int innerCounter = 0;
-		for (float theta = 0; theta <= PI*2; theta += stripe) {
+		for (float theta = 0; theta <= PI * 2; theta += stripe) {
 			innerCounter++;
 			float x = radius * cos(theta + offset);
 			float y = phi;
@@ -198,7 +290,7 @@ void TreeGeneration::generateCylinder() {
 			branchVertices.push_back(z);
 			// ?? 2 
 			float u = theta / 2 / PI;
-			float v = phi/1;
+			float v = phi / 1;
 			branchVertices.push_back(u);
 			branchVertices.push_back(v);
 			branchVertices.push_back(0);
@@ -276,24 +368,32 @@ void TreeGeneration::generateCylinder() {
 void TreeGeneration::display() {
 	// draw trunks
 	for (int i = 0; i < LS.trunks.size(); i++) {
+		// for (int i = 0; i < 1; i++) {
+			/*auto temp = -LS.trunks[i].pos2;
+			cout << temp.x<<" " << temp.y<< " "<<temp.z <<" "<< LS.trunks[i].radius<< endl;*/
+
+		drawFlipBranch(-LS.trunks[i].pos1, -LS.trunks[i].pos2, LS.trunks[i].radius);
 		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
 	}
 	// draw leaves
 	for (int i = 0; i < LS.leaves.size(); i++) {
+		drawFlipLeaf(-LS.leaves[i].pos1, -LS.leaves[i].pos2, tree.leaf.radius);
 		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
 	}
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 7);
+	ImGui::SliderInt("tree size", &level, 0, 3);
 	ImGui::SliderFloat3("tree size", trans, 0, 100);
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
-	if (level != lastLevel) {
-		grow();
+	if (level > lastLevel) {
+		cout << "level change" << endl;
+		LS.grow();
 		lastLevel = level;
 	}
 }
 
 void TreeGeneration::grow() {
 	initLsys();
+
 }

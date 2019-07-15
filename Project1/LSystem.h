@@ -44,7 +44,7 @@ public:
 	LSystem();
 	void init(Tree tree);
 	void clearAll();
-	void initGrammar(int level);
+	void initGrammar();
 	void generateFractal();
 	void grow();
 };

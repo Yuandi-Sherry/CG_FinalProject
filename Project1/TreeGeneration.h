@@ -19,7 +19,7 @@ public:
 	TreeGeneration();
 	~TreeGeneration();
 	void init(glm::mat4 position = glm::mat4(1.0f));
-	void display();
+	void display(GLdouble interval);
 	void displayGUI();
 	int lastLevel = 0;
 	int level = 0;
@@ -59,5 +59,7 @@ private:
 	Tree tree;
 	float trans[3] = { 0.0f, 0.0f, 0.0f };
 	float scale = 0.3f;
+
+	int levelCounter;
 };
 #endif // !TEST_BRANCH

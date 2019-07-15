@@ -51,8 +51,15 @@ WaterSimulation water;
 Terrain terrain;
 Text text;
 Light light;
+
+// 鼠标上次停止移动的时间
+GLdouble stopStartTime;
+
 int main() {
 	GLFWwindow* window = initialize();
+	// 计算鼠标不移动的时间
+	stopStartTime = glfwGetTime();
+
 	// init tree
 	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
 	skybox.init();
@@ -71,18 +78,16 @@ int main() {
 		GLdouble currentTime = glfwGetTime();
 		GLdouble elapsed = currentTime - lastTime;
 		lastTime = currentTime;
-		
+		GLdouble stopInterval = currentTime - stopStartTime;
 		
 		water.display();
 		skybox.display();
-		treeGeneration.display();
+		treeGeneration.display(stopInterval);
 		terrain.display();
 		
 		double t = glfwGetTime();
-		string tmpstr = to_string(t);		
+		string tmpstr = to_string(t);
 		text.display(tmpstr);
-		
-
 
 		displayGUI(window);
 		// GUI
@@ -215,6 +220,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 	lastX = xpos;
 	lastY = ypos;
+	// 更新停止移动鼠标开始的时间
+	stopStartTime = glfwGetTime();
+
 	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
