@@ -26,7 +26,7 @@ void WaterSimulation::init() {
 
 	waterShader.use();
 	waterShader.setVec3("gridColor", color);
-	
+	waterShader.setVec3("lightColor", glm::vec4(1.f));
 	waterShader.setFloat("E", glm::e<GLfloat>());
 	waterShader.setFloat("damp", 0.1f);
 	waterShader.setFloat("Q", 1.0f);
