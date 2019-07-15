@@ -117,20 +117,4 @@ void main() {
     /// Ressources: https://www.opengl.org/wiki/Sampler_(GLSL)#Shadow_samplers
     ///<<<<<<<<<< TODO <<<<<<<<<<<
     float visibility = 1.0;
-    //if(texture(shadowMapTex, ShadowCoord.xy).z  <  ShadowCoord.z) {
-
-
-//    color =
-//     // Ambient : simulates indirect lighting
-//     MaterialAmbientColor +
-//     // Diffuse : "color" of the object
-//     visibility * MaterialDiffuseColor * LightColor * LightPower * cosTheta+
-//     // Specular : reflective highlight, like a mirror
-//     visibility * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5);
-
-    //color = ambient + visibility * diffuse + visibility * specular;
-    //color = visibility * diffuse + visibility * specular;
-    //color = vec3(texture(shadowMapTex, ShadowCoord.xy));
-    //color = vec3(ShadowCoord.z);
-    //clor = ShadowCoord.xyz;
 }
