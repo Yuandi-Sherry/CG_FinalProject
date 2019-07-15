@@ -19,6 +19,8 @@ extern float lastX;
 extern float lastY;
 extern Camera camera;
 extern Terrain terrain;
+extern GLdouble stopStartTime;
+const int GROWINTERVAL = 10; // 以秒为单位
 TreeGeneration::TreeGeneration() {
 
 }
@@ -365,7 +367,7 @@ void TreeGeneration::generateCylinder() {
 
 
 
-void TreeGeneration::display() {
+void TreeGeneration::display(GLdouble interval) {
 	// draw trunks
 	for (int i = 0; i < LS.trunks.size(); i++) {
 		// for (int i = 0; i < 1; i++) {
@@ -379,6 +381,11 @@ void TreeGeneration::display() {
 	for (int i = 0; i < LS.leaves.size(); i++) {
 		drawFlipLeaf(-LS.leaves[i].pos1, -LS.leaves[i].pos2, tree.leaf.radius);
 		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
+	}
+
+	if (interval > GROWINTERVAL && levelCounter < 4) {
+		grow();
+		stopStartTime = glfwGetTime();
 	}
 }
 
@@ -395,5 +402,5 @@ void TreeGeneration::displayGUI() {
 
 void TreeGeneration::grow() {
 	initLsys();
-
+	levelCounter++;
 }
