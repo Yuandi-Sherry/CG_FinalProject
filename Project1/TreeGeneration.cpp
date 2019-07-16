@@ -414,7 +414,8 @@ void TreeGeneration::display() {
 
 void TreeGeneration::displayGUI() {
 	ImGui::SliderInt("tree size", &level, 0, 3);
-	ImGui::SliderFloat3("tree position", rootPosition, 0, 100);
+	ImGui::SliderFloat3("tree position", rootPosition, -200, 200);
+	rootPosition[1] = utils::getHeight(rootPosition[0], rootPosition[2])/255.0f * 50.0f;
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
 }
 

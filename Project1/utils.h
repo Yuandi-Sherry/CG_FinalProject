@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 #include <vector>
+#include "CImg.h"
+using namespace cimg_library;
 using namespace std;
 
 class utils
@@ -192,6 +194,11 @@ public:
 			input.x, input.y, input.z
 		};
 		return ans;
+	}
+
+	static double getHeight(float x, float y) {
+		CImg<unsigned char> img("textures/height.bmp");
+		return double(img((double)(x + 200) / 400 * img.width(), (double)(y + 200) / 400 * img.height(), 0, 0));
 	}
 private:
 

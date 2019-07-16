@@ -100,6 +100,9 @@ int main() {
 			// 生成新的树，push到vector里面
 			TreeGeneration newTree;
 			// TODO: 这里生成新的树需要根据terrain读取出来的位置获得
+			float x,z;
+			// 随机产生x,z即可，使用下面的代码可以根据地形找到对应y的高度
+			float y = utils::getHeight(x, z)/255.0f * 50.0f;
 			//newTree.init(glm::vec3(0, 0, 5));
 			// treeSet.push_back(treeGeneration1);
 		}

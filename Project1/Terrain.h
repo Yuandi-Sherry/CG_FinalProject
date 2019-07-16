@@ -38,7 +38,7 @@ private:
 	GLuint heightMapVBO;
 	void genePermutationTable();
 	void geneGradientVectors();
-
+	
 	
 };
 
