@@ -30,10 +30,12 @@ TreeGeneration::~TreeGeneration() {
 	glDeleteBuffers(1, &leafEBO);
 }
 
-void TreeGeneration::init(glm::mat4 position) {
+void TreeGeneration::init(glm::vec3 position) {
 	leafShader.init("textureShader.vs", "textureShader.fs");
 	branchShader.init("textureShader.vs", "textureShader.fs");
-
+	rootPosition[0] = position.x;
+	rootPosition[1] = position.y;
+	rootPosition[2] = position.z;
 
 	// dealing with l system
 
@@ -64,7 +66,7 @@ void TreeGeneration::drawCylinder(glm::mat4 model) {
 	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
 	branchShader.setMat4("model",
-		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(rootPosition[0], rootPosition[1], rootPosition[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(branchVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
@@ -86,7 +88,7 @@ void TreeGeneration::drawFlipCylinder(glm::mat4 model) {
 	branchShader.setMat4("projection", camera.GetProjectionMatrix());
 	branchShader.setMat4("view", view);
 	branchShader.setMat4("model",
-		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], -trans[1], trans[2])) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(rootPosition[0], -rootPosition[1], rootPosition[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(branchVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
@@ -142,6 +144,10 @@ void TreeGeneration::drawFlipBranch(glm::vec4 start, glm::vec4 end, double radiu
 }
 
 void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
+	/*cout << "draw leaf" << endl;
+	cout << "start: " << start.x << " " << start.y << " " << start.z << endl;
+	cout << "end: " << end.x << " " << end.y << " " << end.z << endl;
+	cout << "radius: " << radius << endl;*/
 	glm::vec3 delta = glm::vec3(end.x - start.x, end.y - start.y, end.z - start.z);
 	GLfloat distance = sqrt(pow(delta.x, 2) + pow(delta.y, 2) + pow(delta.z, 2));
 	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(start.x + radius / 3, start.y + radius / 3, start.z));
@@ -167,7 +173,7 @@ void TreeGeneration::drawLeaf(glm::vec4 start, glm::vec4 end, double radius) {
 	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
 	leafShader.setMat4("model",
-		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], trans[1], trans[2])) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(rootPosition[0], rootPosition[1], rootPosition[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(leafVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -205,7 +211,7 @@ void TreeGeneration::drawFlipLeaf(glm::vec4 start, glm::vec4 end, double radius)
 	leafShader.setMat4("projection", camera.GetProjectionMatrix());
 	leafShader.setMat4("view", view);
 	leafShader.setMat4("model",
-		glm::translate(glm::mat4(1.0f), glm::vec3(trans[0], -trans[1], trans[2])) *
+		glm::translate(glm::mat4(1.0f), glm::vec3(rootPosition[0], -rootPosition[1], rootPosition[2])) *
 		glm::scale(glm::mat4(1.0f), glm::vec3(scale, scale, scale)) * model);
 	glBindVertexArray(leafVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -218,6 +224,7 @@ void TreeGeneration::drawFlipLeaf(glm::vec4 start, glm::vec4 end, double radius)
 void TreeGeneration::initVars() {
 	initLeaf();
 	initBranch();
+	levelCounter = 1;
 }
 /**
 
@@ -366,14 +373,13 @@ void TreeGeneration::generateCylinder() {
 }
 
 
-
-void TreeGeneration::display(GLdouble interval) {
+/**
+ * 
+ * 
+ */
+bool TreeGeneration::display(GLdouble interval) {
 	// draw trunks
 	for (int i = 0; i < LS.trunks.size(); i++) {
-		// for (int i = 0; i < 1; i++) {
-			/*auto temp = -LS.trunks[i].pos2;
-			cout << temp.x<<" " << temp.y<< " "<<temp.z <<" "<< LS.trunks[i].radius<< endl;*/
-
 		drawFlipBranch(-LS.trunks[i].pos1, -LS.trunks[i].pos2, LS.trunks[i].radius);
 		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
 	}
@@ -382,22 +388,34 @@ void TreeGeneration::display(GLdouble interval) {
 		drawFlipLeaf(-LS.leaves[i].pos1, -LS.leaves[i].pos2, tree.leaf.radius);
 		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
 	}
-
-	if (interval > GROWINTERVAL && levelCounter < 4) {
+	if (levelCounter >= 3) {
+		return 1;
+		// 种植下一棵
+	}
+	if (interval > GROWINTERVAL) {
 		grow();
 		stopStartTime = glfwGetTime();
+	}
+	return 0;
+}
+
+void TreeGeneration::display() {
+	// draw trunks
+	/*for (int i = 0; i < LS.trunks.size(); i++) {
+		drawFlipBranch(-LS.trunks[i].pos1, -LS.trunks[i].pos2, LS.trunks[i].radius);
+		drawBranch(LS.trunks[i].pos1, LS.trunks[i].pos2, LS.trunks[i].radius);
+	}*/
+	// draw leaves
+	for (int i = 0; i < LS.leaves.size(); i++) {
+		drawFlipLeaf(-LS.leaves[i].pos1, -LS.leaves[i].pos2, tree.leaf.radius);
+		drawLeaf(LS.leaves[i].pos1, LS.leaves[i].pos2, tree.leaf.radius);
 	}
 }
 
 void TreeGeneration::displayGUI() {
 	ImGui::SliderInt("tree size", &level, 0, 3);
-	ImGui::SliderFloat3("tree size", trans, 0, 100);
+	ImGui::SliderFloat3("tree position", rootPosition, 0, 100);
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
-	if (level > lastLevel) {
-		cout << "level change" << endl;
-		LS.grow();
-		lastLevel = level;
-	}
 }
 
 void TreeGeneration::grow() {

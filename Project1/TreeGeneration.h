@@ -18,8 +18,9 @@ class TreeGeneration
 public:
 	TreeGeneration();
 	~TreeGeneration();
-	void init(glm::mat4 position = glm::mat4(1.0f));
-	void display(GLdouble interval);
+	void init(glm::vec3 vec3);
+	bool display(GLdouble interval);
+	void display();
 	void displayGUI();
 	int lastLevel = 0;
 	int level = 0;
@@ -57,7 +58,7 @@ private:
 	LSystem LS;
 	// tree definiation
 	Tree tree;
-	float trans[3] = { 0.0f, 0.0f, 0.0f };
+	float rootPosition[3] = { 0.0f, 0.0f, 0.0f };
 	float scale = 0.3f;
 
 	int levelCounter;

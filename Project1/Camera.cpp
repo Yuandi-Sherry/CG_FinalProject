@@ -98,10 +98,47 @@ void Camera::updateCameraVectors()
 }
 
 void Camera::displayGUI() {
-	//ImGui::InputFloat("camera - positionX", &Position.x, -50, 50);
-	//ImGui::InputFloat("camera - positionY", &Position.y, -50, 50);
-	//ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
+	ImGui::InputFloat("camera - positionX", &Position.x, -50, 50);
+	ImGui::InputFloat("camera - positionY", &Position.y, -50, 50);
+	ImGui::InputFloat("camera - positionZ", &Position.z, -50, 50);
+	ImGui::RadioButton("local view", &mode, 1);
+	ImGui::RadioButton("global view", &mode, 0);
+	if (mode != lastMode) {
+		cout << "mode != lastMode" << endl;
+		lastMode = mode;
+		
+		// 切换为全局
+		if (mode == 0) {
+			// 将当前的状态保存
+			localPosition = Position;
+			Position = globalPosition;
+			localYaw = Yaw;
+			localPitch = Pitch;
+			Yaw = globalYaw;
+			Pitch = globalPitch;
+		}
+		// 切换为局部
+		else {
+			cout << "切换为局部" << endl;
+			cout << "Position1: " << Position.x << Position.y << Position.z << endl;
+			// 将当前的状态保存
+			if (first) {
+				Position = localPosition;
+				first = false;
+				
+			}
+			else {
+				globalPosition = Position;
+				Position = localPosition;
 
-//	ImGui::InputFloat("Zoom", &Zoom, 0, 90);
+				globalYaw = Yaw;
+				globalPitch = Pitch;
+				Yaw = localYaw;
+				Pitch = localPitch;
+			}
+			
+			cout << "Position2: " << Position.x << Position.y << Position.z << endl;
+		}
+	}
 	ImGui::InputFloat("far panel", &farPanel, 100, 1000);
 }

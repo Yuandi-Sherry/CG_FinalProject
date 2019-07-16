@@ -187,7 +187,7 @@ public:
 		return ans;
 	}
 
-	float* vec3ToArray(glm::vec3 input) {
+	static float* vec3ToArray(glm::vec3 input) {
 		float ans[3] = {
 			input.x, input.y, input.z
 		};

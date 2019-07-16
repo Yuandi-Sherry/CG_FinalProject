@@ -44,7 +44,9 @@ void processInput(GLFWwindow * window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
+vector<TreeGeneration> treeSet;
 TreeGeneration treeGeneration;
+TreeGeneration treeGeneration1;
 Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
@@ -61,7 +63,11 @@ int main() {
 	stopStartTime = glfwGetTime();
 
 	// init tree
-	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
+	treeGeneration.init(glm::vec3(0.0f, 0.0f, 0));
+	//treeGeneration1.init(glm::vec3(0.0f, 0.0f, 5));
+	//treeSet.push_back(treeGeneration);
+	//treeSet.push_back(treeGeneration1);
+	// BUG: vector push_back了一个新的树会导致上一颗树无法显示树叶
 	skybox.init();
 	water.init();
 	terrain.init();
@@ -83,6 +89,26 @@ int main() {
 		water.display();
 		skybox.display();
 		treeGeneration.display(stopInterval);
+		// treeGeneration1.display();
+		// 非最后一棵正常显示
+		//for (int i = 0; i < treeSet.size(); i++) {
+			//treeSet[i].display();
+		//}
+		// 最后一棵记录时间
+		/*if (treeSet[treeSet.size()-1].display(stopInterval) == 1) {
+			cout << "------------PLANT A NEW TREE NOW---------------" << endl;
+			// 生成新的树，push到vector里面
+			TreeGeneration newTree;
+			// TODO: 这里生成新的树需要根据terrain读取出来的位置获得
+			//newTree.init(glm::vec3(0, 0, 5));
+			// treeSet.push_back(treeGeneration1);
+		}
+		else {
+			// cout << "------------STOP INTERVAL--------------" << stopInterval << endl;
+		}*/
+		// 返回值，返回1，则种植下一棵
+		
+		// 如果树长到最大，则随机位置种下一棵
 		terrain.display();
 		
 		double t = glfwGetTime();

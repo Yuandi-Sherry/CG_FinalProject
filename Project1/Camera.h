@@ -49,20 +49,26 @@ public:
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 	{
+		localPosition = position;
 		Position = position;
 		WorldUp = up;
 		Yaw = yaw;
 		Pitch = pitch;
+		globalPosition = glm::vec3(20.0f, 100.0f, 80.0f);
 		updateCameraVectors();
+		
 	}
 	// Constructor with scalar values
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 	{
 		Position = glm::vec3(posX, posY, posZ);
+		localPosition = Position;
 		WorldUp = glm::vec3(upX, upY, upZ);
 		Yaw = yaw;
 		Pitch = pitch;
+		globalPosition = glm::vec3(20.0f, 100.0f, 80.0f);
 		updateCameraVectors();
+
 	}
 
 	// Returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -84,5 +90,15 @@ public:
 private:
 	// Calculates the front vector from the Camera's (updated) Euler Angles
 	void updateCameraVectors();
+
+	int mode = 1;
+	int lastMode = 0;
+	glm::vec3 localPosition;
+	glm::vec3 globalPosition;
+	bool first = true;
+	float localPitch = 0.0;
+	float localYaw = -90.0;
+	float globalPitch;
+	float globalYaw;
 };
 #endif
