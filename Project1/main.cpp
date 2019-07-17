@@ -44,9 +44,7 @@ void processInput(GLFWwindow * window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-vector<TreeGeneration> treeSet;
-TreeGeneration treeGeneration;
-TreeGeneration treeGeneration1;
+
 Camera camera(glm::vec3(0.0f,20.0f, 20.0f));
 Skybox skybox;
 WaterSimulation water;
@@ -63,7 +61,7 @@ int main() {
 	stopStartTime = glfwGetTime();
 
 	// init tree
-	treeGeneration.init(glm::vec3(0.0f, 0.0f, 0));
+	//treeGeneration.init(glm::vec3(0.0f, 0.0f, 0));
 	//treeGeneration1.init(glm::vec3(0.0f, 0.0f, 5));
 	//treeSet.push_back(treeGeneration);
 	//treeSet.push_back(treeGeneration1);
@@ -73,6 +71,11 @@ int main() {
 	terrain.init();
 	text.init(windowWidth, windowHeight);
 	GLdouble lastTime = glfwGetTime();
+	TreeGeneration tree1;
+	float x = 0.0f, z = 0.0f;
+	tree1.init(glm::vec3(x,utils::getHeight(x,z),z));
+	vector<TreeGeneration> treeSet;
+	treeSet.push_back(tree1);
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.5f, 0.6f, 0.7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -88,27 +91,32 @@ int main() {
 		
 		water.display();
 		skybox.display();
-		treeGeneration.display(stopInterval);
-		// treeGeneration1.display();
 		// 非最后一棵正常显示
+		// cout << "treeSet.size() " << treeSet.size() << endl;
+		for (int i = 0; i < treeSet.size() - 1; i++) {
+			treeSet[i].display();
+		}
+		// tree1.display(stopInterval);
+		// treeGeneration1.display();
+		
 		//for (int i = 0; i < treeSet.size(); i++) {
 			//treeSet[i].display();
 		//}
 		// 最后一棵记录时间
-		/*if (treeSet[treeSet.size()-1].display(stopInterval) == 1) {
-			cout << "------------PLANT A NEW TREE NOW---------------" << endl;
+		if (treeSet[treeSet.size() - 1].display(stopInterval) == 1) {
+			//cout << "------------PLANT A NEW TREE NOW---------------" << endl;
 			// 生成新的树，push到vector里面
 			TreeGeneration newTree;
 			// TODO: 这里生成新的树需要根据terrain读取出来的位置获得
-			float x,z;
+			float x = 10, z = 10;
 			// 随机产生x,z即可，使用下面的代码可以根据地形找到对应y的高度
-			float y = utils::getHeight(x, z)/255.0f * 50.0f;
-			//newTree.init(glm::vec3(0, 0, 5));
-			// treeSet.push_back(treeGeneration1);
+			float y = utils::getHeight(x, z) / 255.0f * 50.0f;
+			newTree.init(glm::vec3(x, y, z));
+			treeSet.push_back(newTree);
 		}
 		else {
 			// cout << "------------STOP INTERVAL--------------" << stopInterval << endl;
-		}*/
+		}
 		// 返回值，返回1，则种植下一棵
 		
 		// 如果树长到最大，则随机位置种下一棵
@@ -231,7 +239,7 @@ void displayGUI(GLFWwindow* window) {
 	camera.displayGUI();
 	// skybox.displayGUI();
 	// terrain.displayGUI();
-	treeGeneration.displayGUI();
+	// tree1.displayGUI();
 	light.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
