@@ -51,6 +51,7 @@ WaterSimulation water;
 Terrain terrain;
 Text text;
 Light light;
+TreeGeneration tree1;
 
 // 鼠标上次停止移动的时间
 GLdouble stopStartTime;
@@ -71,7 +72,7 @@ int main() {
 	terrain.init();
 	text.init(windowWidth, windowHeight);
 	GLdouble lastTime = glfwGetTime();
-	TreeGeneration tree1;
+	
 	float x = 0.0f, z = 0.0f;
 	tree1.init(glm::vec3(x,utils::getHeight(x,z),z));
 	vector<TreeGeneration> treeSet;
@@ -239,7 +240,7 @@ void displayGUI(GLFWwindow* window) {
 	camera.displayGUI();
 	// skybox.displayGUI();
 	// terrain.displayGUI();
-	// tree1.displayGUI();
+	//tree1.displayGUI();
 	light.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();

@@ -229,8 +229,8 @@ void TreeGeneration::initVars() {
 /**
 
  */
-void TreeGeneration::initLeaf() {
-	leafTexture = utils::loadTextureCutout((GLchar*)"./Maple1.png");
+void TreeGeneration::initLeaf() {		
+	leafTexture = utils::loadTextureCutout((GLchar*)"./textures/Maple1.png");
 
 	float temp[] = {
 		// positions          // colors           // texture coords
@@ -252,10 +252,10 @@ void TreeGeneration::initLeaf() {
 	glBindVertexArray(leafVAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, leafVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(temp), &temp, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(temp), &temp, GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, leafEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
 
 	//glEnableVertexAttribArray(0);
 
@@ -272,7 +272,7 @@ void TreeGeneration::initLeaf() {
 
 
 void TreeGeneration::initBranch() {
-	branchTexture = utils::loadTexture((GLchar*)"./bark1.bmp");
+	branchTexture = utils::loadTexture((GLchar*)"./textures/bark2.bmp");
 	generateCylinder();
 	branchShader.use();
 	branchShader.setInt("myTexture", 0);
@@ -359,10 +359,10 @@ void TreeGeneration::generateCylinder() {
 	glBindVertexArray(branchVAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, branchVBO);
-	glBufferData(GL_ARRAY_BUFFER, branchVertices.size() * sizeof(branchVertices[0]), branchVertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, branchVertices.size() * sizeof(branchVertices[0]), branchVertices.data(), GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, branchEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, branchIndices.size() * sizeof(branchVertices[0]), branchIndices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, branchIndices.size() * sizeof(branchVertices[0]), branchIndices.data(), GL_DYNAMIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
@@ -413,10 +413,10 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 3);
-	ImGui::SliderFloat3("tree position", rootPosition, -200, 200);
+	//ImGui::SliderInt("tree size", &level, 0, 3);
+	//ImGui::SliderFloat3("tree position", rootPosition, -200, 200);
 	
-	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
+	//ImGui::SliderFloat("scale size", &scale, 0, 0.3);	
 }
 
 void TreeGeneration::grow() {
