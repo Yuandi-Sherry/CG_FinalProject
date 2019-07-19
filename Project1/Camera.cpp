@@ -139,6 +139,7 @@ void Camera::displayGUI() {
 			
 			cout << "Position2: " << Position.x << Position.y << Position.z << endl;
 		}
+		updateCameraVectors();
 	}
 	ImGui::InputFloat("far panel", &farPanel, 100, 1000);
 }

@@ -103,8 +103,6 @@ void main() {
         vec3 forest = texture2D(treeTex, 10*displaced.xy).rgb;
         mapped = mix(stone, forest, slope);
     } 
-    //Ambient color component
-    
     // Assemble the colors.
     color = (ambient + diffuse + specular)*mapped;
     vec3 light = vec3(0.8);
