@@ -4,9 +4,25 @@
 | ---- | ---------------------------- |
 | 2    | 周远笛、谢涛、袁之浩、杨泓臻 |
 
-## 项目介绍以及实现结果（周远笛）
+## 项目介绍以及实现结果
 
-## 开发环境以及使用到的第三方库（谢涛）
+### 项目介绍
+
+作为专注森林真实感效果的衍生产品，我们小组实现了随时间生长的树，在鼠标不移动的情况下数目会缓慢生长（详见demo.mp4）。加入天气的模拟使得这片有山有水有草的世界仿佛就在我们所生活的境地，这使得每天在忙碌生活的同时内心也可以感到宁静。每次的树都是不同的，这使得每次看到这棵树、期待它生长的过程中会得到不一样的惊喜。
+
+### 实现结果
+
+主要功能有：
+
+1. GUI的global和local实现树视角的切换
+2. 模拟晴天雨天
+3. 鼠标不移动树会随时间生长（为了避免等待太久，这里设置为鼠标不移动10s树就会生长）
+
+实现结果截图如下：
+
+![1563547810335](C:\Users\Sherry\AppData\Roaming\Typora\typora-user-images\1563547810335.png)
+
+## 开发环境以及使用到的第三方库
 
 
 环境：opengl基础环境，无特殊dll。
@@ -536,7 +552,7 @@ opengl_libs
         stb_image.cpp
 ```
 
-## 实现功能列表(Basic与Bonus)（谢涛和泓臻）
+## 实现功能列表(Basic与Bonus)
 
 #### Basic
 
@@ -550,16 +566,16 @@ opengl_libs
 1. Sky Box (天空盒)
 2. Display Text (显示文字，中文/英文/立体/平面)
 3. Stencil Test (模板测试)
-4. Complex Lighting (复杂光照: Gamma矫正、法线贴图、HDR、SSAO…)
 5. Gravity System and Collision Detection (重力系统与碰撞检测)
 6. Particle System (粒子系统: 渲染雨、雪、雾等)
-7. Anti-Aliasing (抗锯齿)
 8. Fluid Simulation (流体模拟)
 9. L system和树生长
-10. reflect
+10. 倒影
+9. 反射
+10. 地形生成
 
 
-## 对实现的功能点做简单介绍(Bonus主要介绍实现原理)，加结果截图（粘贴个人报告）
+## 对实现的功能点做简单介绍(Bonus主要介绍实现原理)，加结果截图
 
 ### 天空盒
 
@@ -585,9 +601,9 @@ opengl_libs
 
 #### 效果
 
-<img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/skybox.gif" width="500"/>
+<img src="./yd-imgs/skybox.gif" width="500"/>
 
-### 显示文字（xt）
+### 显示文字
 
 一开始打算在 GitHub 上找一些比较好看的字体库来使用，找了一段时间找到过两个好一些的库，一个是渲染 3d 字体，一个是渲染 2d 字体，经测试后发现该 3d字体库 用的依赖较老且存在一些内部问题，该 2d字体库 则与项目不兼容，便决定老老实实跟着 freetype 的教程自己渲染 2d 的字体，花了些时间去找一些比较漂亮的2d字体。
 
@@ -597,9 +613,13 @@ opengl_libs
 - 实现阶段。实现目标：在场景中显示时间戳，植物的生长状态会根据时间变化（比如每过十五分钟或半个小时，树长大一点）。
 ![](./xt-imgs/text2.png)
 
-### 重力系统与碰撞检测（hz）
+### 模板测试
 
-### 粒子系统
+为了避免倒影在非镜面所占区域之外显示，可以使用OpenGl的模板测试(Stencil Test)。
+
+模板测试和深度测试类似，它为每一个片段维护一个模板值(Stencil Value)，放在模板缓冲(Stencil Buffer)中，然后在模板测试时根据这个模板值，我们就可以决定丢弃或保留对应的片段了。所以我们在绘制水面的时候，开启模板测试，标记水面区域，然后再绘制倒影时，只在标记了的屏幕区域显示。
+
+### 重力系统与碰撞检测 & 粒子系统
 
 每一滴雨都是一个粒子，通过粒子生成器particleGenerator来对粒子进行统一的管理，持续不断地生成新的粒子，以及将过期的粒子进行回收，避免内存的过度占用。
 
@@ -608,11 +628,9 @@ opengl_libs
 关于粒子用什么形状，本来有考虑过用贴图水滴的图片，但是因为雨的下落速度较快，正常观察到的不是水珠而是类似线端，所以以线段来作为粒子的显示形状。
 
 如何控制雨量的大小，通过控制粒子的下落速度和每次更新增加的粒子数量来实现。
-![](C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/yhz-imgs/rain.PNG)
+![](./yhz-imgs/rain.PNG)
 **重力系统**
 对每个粒子加一个y轴的向量velocity作为重力，每次刷新测得时间差，对粒子的位置position加上velocity进行更新。
-
-### Anti-Aliasing (抗锯齿)（TODO????）
 
 ### 流体模拟
 
@@ -637,7 +655,7 @@ $$
 
 #### 效果
 
-<img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/water.gif" width="400"/>
+<img src="./yd-imgs/water.gif" width="400"/>
 
 ### LSystem和树生长
 
@@ -653,7 +671,7 @@ Lsystem用于树木生长的模拟。首先需要定义树生长的文法，根�
 
 > `FA[*+X][-/&X][/%X]B`
 >
-> <img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/singleBranch.png" width="100">
+> <img src="./yd-imgs/singleBranch.png" width="100">
 
 ###### 迭代
 
@@ -728,25 +746,17 @@ stopStartTime = glfwGetTime();
 
 ##### 静态绘制
 
-<img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/tree.png" width="200">
+<img src="./yd-imgs/tree.png" width="200">
 
 ##### 动态生长
 
-<img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/growing.gif" width="400"/>
-
-
+<img src="./yd-imgs/growing.gif" width="400"/>
 
 ### 倒影
 
 ![img](https://img-blog.csdn.net/20130912203113031?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemp1bGw=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 给定一个顶点V(x,y,z,1)以及一个平面P(n,d)，其中n为平面单位法向量，d为原点到该平面的有向距离，可以求得顶点V相对于平面P的镜像顶点V‘=MV，这个M是个4x4的矩阵，就叫反射矩阵(reflection matrix)。有了反射矩阵，在绘制物体时，只需要在物体世界变换之后再加入镜像变换，即乘以世界变换矩阵之后，再乘以反射矩阵，就可以绘制倒影了。
-
-### 模板测试
-
-为了避免倒影在非镜面所占区域之外显示，可以使用OpenGl的模板测试(Stencil Test)。
-
-模板测试和深度测试类似，它为每一个片段维护一个模板值(Stencil Value)，放在模板缓冲(Stencil Buffer)中，然后在模板测试时根据这个模板值，我们就可以决定丢弃或保留对应的片段了。所以我们在绘制水面的时候，开启模板测试，标记水面区域，然后再绘制倒影时，只在标记了的屏幕区域显示。
 
 ### 反射
 
@@ -780,7 +790,7 @@ float height = texture(heightMapTex, UV).r;
 
 #### 效果
 
-<img src="C:/Users/Sherry/OneDrive%20-%20%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/%E5%A4%A7%E4%B8%89%E4%B8%8B/ComputerGraphics/Final%20Project/TryLSystem/Project1/imgs/terrain.png" width="500">
+<img src="./yd-imgs/terrain.png" width="500">
 
 ## 遇到的问题和解决方案
 
@@ -793,7 +803,7 @@ float height = texture(heightMapTex, UV).r;
 
 |  姓名  |   学号   |                           分工内容                           |
 | :----: | :------: | :----------------------------------------------------------: |
-| 周远笛 | 16340311 | Camera Roaming, Simple Lighting and Shading, Texture Mapping, Model Import & Mesh viewing, Skybox, Fluid Simulation, LSystem, Terraingit |
+| 周远笛 | 16340311 | Camera Roaming, Simple Lighting and Shading, Texture Mapping, Model Import & Mesh viewing, Skybox, Fluid Simulation, LSystem, Terrain |
 | 杨泓臻 | 16340269 |                 粒子系统，重力系统，处理冲突                 |
 | 谢涛 | 16340255 |           显示文字，协助debug          |
 | 袁之浩 | 16340282 | 流体模拟，倒影，反射 |
