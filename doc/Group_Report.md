@@ -20,7 +20,7 @@
 
 实现结果截图如下：
 
-![1563547810335](C:\Users\Sherry\AppData\Roaming\Typora\typora-user-images\1563547810335.png)
+![1563547810335](./yd-imgs/general.png)
 
 ## 开发环境以及使用到的第三方库
 
