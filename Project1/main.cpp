@@ -76,7 +76,7 @@ int main() {
 	GLdouble lastTime = glfwGetTime();
 	
 	float x = 0.0f, z = 0.0f;
-	tree1.init(glm::vec3(x,utils::getHeight(x,z),z));
+	tree1.init(glm::vec3(x,0,z));
 	//vector<TreeGeneration> treeSet;
 	//treeSet.push_back(tree1);
 	while (!glfwWindowShouldClose(window)) {
