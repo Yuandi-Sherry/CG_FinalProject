@@ -14,6 +14,7 @@
 #include "WaterSimulation.h"
 #include "Terrain.h"
 #include "text.h"
+#include "ParticleGenerator.h"
 #define N 888
 
 using namespace std;
@@ -37,7 +38,7 @@ int windowHeight = 900;
 float lastX = windowWidth / 2.0;
 float lastY = windowHeight / 2.0;
 
-const char* glsl_version = "#version 130";
+const char* glsl_version = "#version 330";
 
 // keyboard and mouse manipulate
 void processInput(GLFWwindow * window);
@@ -51,14 +52,17 @@ WaterSimulation water;
 Terrain terrain;
 Text text;
 Light light;
+ParticleGenerator particleGenerator;
 int main() {
 	GLFWwindow* window = initialize();
 	// init tree
-	treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
-	skybox.init();
-	water.init();
-	terrain.init();
-	text.init(windowWidth, windowHeight);
+	//treeGeneration.init(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f, 0.0f, -50.0f)));
+	//skybox.init();
+	//water.init();
+	//terrain.init();
+	//text.init(windowWidth, windowHeight);
+	particleGenerator.init(3000,20,100);
+
 	GLdouble lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.5f, 0.6f, 0.7f, 1.0f);
@@ -73,15 +77,17 @@ int main() {
 		lastTime = currentTime;
 		
 		
-		water.display();
-		skybox.display();
-		treeGeneration.display();
-		terrain.display();
+		//water.display();
+		//skybox.display();
+		//treeGeneration.display();
+		//terrain.display();
+		particleGenerator.display(elapsed, 100);
 		
 		double t = glfwGetTime();
 		string tmpstr = to_string(t);		
-		text.display(tmpstr);
-		
+		//text.display(tmpstr);
+
+		particleGenerator.display(elapsed,100);
 
 
 		displayGUI(window);
@@ -107,6 +113,8 @@ GLFWwindow* initialize() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	// ´´½¨´°¿Ú
 	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "FINAL_PROJECT", NULL, NULL);
 	if (window == NULL) {
@@ -129,6 +137,7 @@ GLFWwindow* initialize() {
 	// init GUI'
 	initGUI(window);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 	return window;
 }
 

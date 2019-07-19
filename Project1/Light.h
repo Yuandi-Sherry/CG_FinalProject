@@ -18,7 +18,7 @@ public:
 		return lightDir;
 	}
 private:
-	float lightColor[3] = { 1.0f, 0.0f, 0.0f };
+	float lightColor[3] = { 1.0f, 1.0f, 1.0f };
 	float lightPos[3] = { 0.0f, 0.0f, 0.0f };
 	float lightDir[3] = { 1.0f, 1.0f, 1.0f };
 };
