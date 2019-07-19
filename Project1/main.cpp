@@ -14,6 +14,7 @@
 #include "WaterSimulation.h"
 #include "Terrain.h"
 #include "text.h"
+#include "particleGenerator.h"
 #define N 888
 
 using namespace std;
@@ -52,7 +53,7 @@ Terrain terrain;
 Text text;
 Light light;
 TreeGeneration tree1;
-
+ParticleGenerator particleGenerator;
 // 鼠标上次停止移动的时间
 GLdouble stopStartTime;
 
@@ -71,6 +72,7 @@ int main() {
 	water.init();
 	terrain.init();
 	text.init(windowWidth, windowHeight);
+	particleGenerator.init(5000, 100, 100);
 	GLdouble lastTime = glfwGetTime();
 	
 	float x = 0.0f, z = 0.0f;
@@ -126,6 +128,8 @@ int main() {
 		double t = glfwGetTime();
 		string tmpstr = to_string(t);
 		text.display(tmpstr);
+
+		particleGenerator.display(elapsed,20);
 
 		displayGUI(window);
 		// GUI
