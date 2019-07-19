@@ -66,7 +66,6 @@ void ParticleGenerator::Draw()
 			//glBindVertexArray(this->VAO);
 		}
 	}
-	cout << low << endl;
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &this->VAO);
