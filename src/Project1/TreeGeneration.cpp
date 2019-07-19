@@ -31,8 +31,8 @@ TreeGeneration::~TreeGeneration() {
 }
 
 void TreeGeneration::init(glm::vec3 position) {
-	leafShader.init("textureShader.vs", "textureShader.fs");
-	branchShader.init("textureShader.vs", "textureShader.fs");
+	leafShader.init("./shader/textureShader.vs", "./shader/textureShader.fs");
+	branchShader.init("./shader/textureShader.vs", "./shader/textureShader.fs");
 	rootPosition[0] = position.x;
 	rootPosition[1] = position.y;
 	rootPosition[2] = position.z;

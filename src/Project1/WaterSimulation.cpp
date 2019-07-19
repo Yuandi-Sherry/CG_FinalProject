@@ -19,9 +19,9 @@ WaterSimulation::~WaterSimulation()
 void WaterSimulation::init() {
 	firstRender = true;
 
-	waterShader.init("water.vs", "water.fs");
+	waterShader.init("./shader/water.vs", "./shader/water.fs");
 	// set mesh
-	waterMesh = new Mesh("grid.obj");
+	waterMesh = new Mesh("./textures/grid.obj");
 	color = glm::vec4(0.0f, 0.5f, 1.0f, 1.0f);
 
 	waterShader.use();

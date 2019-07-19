@@ -21,7 +21,7 @@ Skybox::~Skybox()
 }
 
 void Skybox::init() {
-	skyboxShader.init("skybox.vs", "skybox.fs");
+	skyboxShader.init("./shader/skybox.vs", "./shader/skybox.fs");
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);

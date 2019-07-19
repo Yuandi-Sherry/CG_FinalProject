@@ -36,7 +36,7 @@ void Terrain::init() {
 	scale = glm::vec3(200.0f, 200.0f, 50.0f);
 	
 	// init shader
-	terrainShader.init("terrain.vs", "terrain.fs");
+	terrainShader.init("./shader/terrain.vs", "./shader/terrain.fs");
 	terrainShader.use();
 	
 	// load image from file for height map texture
@@ -189,7 +189,7 @@ void Terrain::geneHeightMap() {
 	GLuint vertexArrayID;
 	glGenVertexArrays(1, &vertexArrayID);
 	glBindVertexArray(vertexArrayID);
-	heightMapShader.init("heightMap.vs", "heightMap.fs");
+	heightMapShader.init("./shader/heightMap.vs", "./shader/heightMap.fs");
 	heightMapShader.use();
 
 	GLuint frameBufferID;

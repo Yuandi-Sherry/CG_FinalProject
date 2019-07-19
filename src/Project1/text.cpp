@@ -17,7 +17,7 @@ void Text::init(int windowWidth, int windowHeight) {
 	glViewport(0, 0, width, height);	
 
 	// Compile and setup the shader
-	textShader.init("text.vs", "text.fs");
+	textShader.init("./shader/text.vs", "./shader/text.fs");
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(width), 0.0f, static_cast<GLfloat>(height));
 	textShader.use();
 	glUniformMatrix4fv(glGetUniformLocation(textShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));

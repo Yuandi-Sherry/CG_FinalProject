@@ -83,7 +83,7 @@ void ParticleGenerator::init(GLuint amount, GLfloat areaLenght, GLfloat fallHeig
 	for (GLuint i = 0; i < this->amount; ++i)
 		this->particles.push_back(Particle());
 
-	this->shader.init("Render.vs", "Render.fs");
+	this->shader.init("./shader/Render.vs", "./shader/Render.fs");
 }
 
 // Stores the index of the last particle used (for quick access to next dead particle)
