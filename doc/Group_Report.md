@@ -597,8 +597,6 @@ opengl_libs
 - 实现阶段。实现目标：在场景中显示时间戳，植物的生长状态会根据时间变化（比如每过十五分钟或半个小时，树长大一点）。
 ![](./xt-imgs/text2.png)
 
-### Stencil Test (模板测试)（TODO????）
-
 ### 重力系统与碰撞检测（hz）
 
 ### 粒子系统
@@ -738,7 +736,15 @@ stopStartTime = glfwGetTime();
 
 
 
-### 倒影（curry）
+### 倒影
+
+给定一个顶点V(x,y,z,1)以及一个平面P(n,d)，其中n为平面单位法向量，d为原点到该平面的有向距离，可以求得顶点V相对于平面P的镜像顶点V‘=MV，这个M是个4x4的矩阵，就叫反射矩阵(reflection matrix)。有了反射矩阵，在绘制物体时，只需要在物体世界变换之后再加入镜像变换，即乘以世界变换矩阵之后，再乘以反射矩阵，就可以绘制倒影了。
+
+### 模板测试
+
+为了避免倒影在非镜面所占区域之外显示，可以使用OpenGl的模板测试(Stencil Test)。
+
+模板测试和深度测试类似，它为每一个片段维护一个模板值(Stencil Value)，放在模板缓冲(Stencil Buffer)中，然后在模板测试时根据这个模板值，我们就可以决定丢弃或保留对应的片段了。所以我们在绘制水面的时候，开启模板测试，标记水面区域，然后再绘制倒影时，只在标记了的屏幕区域显示。
 
 ### 地形生成
 
@@ -782,3 +788,4 @@ float height = texture(heightMapTex, UV).r;
 | 周远笛 | 16340311 | Camera Roaming, Simple Lighting and Shading, Texture Mapping, Model Import & Mesh viewing, Skybox, Fluid Simulation, LSystem, Terraingit |
 | 杨泓臻 | 16340269 |                 粒子系统，重力系统，处理冲突                 |
 | 谢涛 | 16340255 |           显示文字，协助debug          |
+| 袁之浩 | 16340282 | 流体模拟，倒影 |
