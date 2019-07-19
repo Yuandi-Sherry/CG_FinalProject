@@ -18,17 +18,13 @@ struct Particle {
 	Particle() : Position(0.0f), Velocity(0.0f), Color(1.0f){ }
 };
 
-
-// ParticleGenerator acts as a container for rendering a large number of 
-// particles by repeatedly spawning and updating particles and killing 
-// them after a given amount of time.
 class ParticleGenerator
 {
 public:
 	// Constructor
 	ParticleGenerator();
 	void display(GLfloat dt, GLuint newParticles);
-	// Initializes buffer and vertex attributes
+	// Initializes particle
 	void init(GLuint amount, GLfloat areaLenght, GLfloat fallHeight);
 private:
 	GLfloat translation[3] = { 0.0f, 1.0f, 0.0f };
