@@ -738,6 +738,8 @@ stopStartTime = glfwGetTime();
 
 ### 倒影
 
+![img](https://img-blog.csdn.net/20130912203113031?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemp1bGw=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+
 给定一个顶点V(x,y,z,1)以及一个平面P(n,d)，其中n为平面单位法向量，d为原点到该平面的有向距离，可以求得顶点V相对于平面P的镜像顶点V‘=MV，这个M是个4x4的矩阵，就叫反射矩阵(reflection matrix)。有了反射矩阵，在绘制物体时，只需要在物体世界变换之后再加入镜像变换，即乘以世界变换矩阵之后，再乘以反射矩阵，就可以绘制倒影了。
 
 ### 模板测试
@@ -745,6 +747,12 @@ stopStartTime = glfwGetTime();
 为了避免倒影在非镜面所占区域之外显示，可以使用OpenGl的模板测试(Stencil Test)。
 
 模板测试和深度测试类似，它为每一个片段维护一个模板值(Stencil Value)，放在模板缓冲(Stencil Buffer)中，然后在模板测试时根据这个模板值，我们就可以决定丢弃或保留对应的片段了。所以我们在绘制水面的时候，开启模板测试，标记水面区域，然后再绘制倒影时，只在标记了的屏幕区域显示。
+
+### 反射
+
+![img](http://learnopengl.com/img/advanced/cubemaps_reflection_theory.png)
+
+我们基于观察方向向量I和物体的法线向量N计算出反射向量R。我们可以使用GLSL的内建函数reflect来计算这个反射向量。最后向量R作为一个方向向量对立方体贴图进行索引/采样，返回一个环境的颜色值。最后的效果看起来就像物体反射了天空盒。
 
 ### 地形生成
 
@@ -788,4 +796,4 @@ float height = texture(heightMapTex, UV).r;
 | 周远笛 | 16340311 | Camera Roaming, Simple Lighting and Shading, Texture Mapping, Model Import & Mesh viewing, Skybox, Fluid Simulation, LSystem, Terraingit |
 | 杨泓臻 | 16340269 |                 粒子系统，重力系统，处理冲突                 |
 | 谢涛 | 16340255 |           显示文字，协助debug          |
-| 袁之浩 | 16340282 | 流体模拟，倒影 |
+| 袁之浩 | 16340282 | 流体模拟，倒影，反射 |
