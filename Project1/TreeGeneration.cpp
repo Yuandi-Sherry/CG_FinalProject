@@ -383,7 +383,7 @@ void TreeGeneration::display() {
 }
 
 void TreeGeneration::displayGUI() {
-	ImGui::SliderInt("tree size", &level, 0, 4);
+	ImGui::SliderInt("tree size", &level, 0, 3);
 	ImGui::SliderFloat3("tree size", trans, 0, 100);
 	ImGui::SliderFloat("scale size", &scale, 0, 0.3);
 	if (level > lastLevel) {
