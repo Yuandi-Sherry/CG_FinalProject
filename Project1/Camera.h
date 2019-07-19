@@ -54,7 +54,7 @@ public:
 		WorldUp = up;
 		Yaw = yaw;
 		Pitch = pitch;
-		globalPosition = glm::vec3(20.0f, 100.0f, 80.0f);
+		globalPosition = glm::vec3(20.0f, 30.0f, 80.0f);
 		updateCameraVectors();
 		
 	}
@@ -66,7 +66,7 @@ public:
 		WorldUp = glm::vec3(upX, upY, upZ);
 		Yaw = yaw;
 		Pitch = pitch;
-		globalPosition = glm::vec3(20.0f, 100.0f, 80.0f);
+		globalPosition = glm::vec3(20.0f, 30.0f, 80.0f);
 		updateCameraVectors();
 
 	}

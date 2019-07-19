@@ -14,6 +14,7 @@
 #include "WaterSimulation.h"
 #include "Terrain.h"
 #include "text.h"
+#include "particleGenerator.h"
 #define N 888
 
 using namespace std;
@@ -51,7 +52,8 @@ WaterSimulation water;
 Terrain terrain;
 Text text;
 Light light;
-
+TreeGeneration tree1;
+ParticleGenerator particleGenerator;
 // 鼠标上次停止移动的时间
 GLdouble stopStartTime;
 
@@ -70,12 +72,13 @@ int main() {
 	water.init();
 	terrain.init();
 	text.init(windowWidth, windowHeight);
+	particleGenerator.init(5000, 100, 100);
 	GLdouble lastTime = glfwGetTime();
-	TreeGeneration tree1;
+	
 	float x = 0.0f, z = 0.0f;
 	tree1.init(glm::vec3(x,utils::getHeight(x,z),z));
-	vector<TreeGeneration> treeSet;
-	treeSet.push_back(tree1);
+	//vector<TreeGeneration> treeSet;
+	//treeSet.push_back(tree1);
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.5f, 0.6f, 0.7f, 1.0f);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -93,17 +96,18 @@ int main() {
 		skybox.display();
 		// 非最后一棵正常显示
 		// cout << "treeSet.size() " << treeSet.size() << endl;
-		for (int i = 0; i < treeSet.size() - 1; i++) {
-			treeSet[i].display();
-		}
+		//for (int i = 0; i < treeSet.size() - 1; i++) {
+			//treeSet[i].display();
+		//}
+		tree1.display(stopInterval);
 		// tree1.display(stopInterval);
 		// treeGeneration1.display();
 		
 		//for (int i = 0; i < treeSet.size(); i++) {
 			//treeSet[i].display();
 		//}
-		// 最后一棵记录时间
-		if (treeSet[treeSet.size() - 1].display(stopInterval) == 1) {
+		//最后一棵记录时间
+		/*if (treeSet[treeSet.size() - 1].display(stopInterval) == 1) {
 			//cout << "------------PLANT A NEW TREE NOW---------------" << endl;
 			// 生成新的树，push到vector里面
 			TreeGeneration newTree;
@@ -116,7 +120,7 @@ int main() {
 		}
 		else {
 			// cout << "------------STOP INTERVAL--------------" << stopInterval << endl;
-		}
+		}*/
 		// 返回值，返回1，则种植下一棵
 		
 		// 如果树长到最大，则随机位置种下一棵
@@ -125,6 +129,8 @@ int main() {
 		double t = glfwGetTime();
 		string tmpstr = to_string(t);
 		text.display(tmpstr);
+
+		particleGenerator.display(elapsed,20);
 
 		displayGUI(window);
 		// GUI
@@ -239,7 +245,7 @@ void displayGUI(GLFWwindow* window) {
 	camera.displayGUI();
 	// skybox.displayGUI();
 	// terrain.displayGUI();
-	// tree1.displayGUI();
+	//tree1.displayGUI();
 	light.displayGUI();
 	// ----------------------------------------- modify there -----------------------------------------
 	ImGui::End();
